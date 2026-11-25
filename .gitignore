@@ -6,6 +6,7 @@ Thumbs.db
 logs/
 conf/
 AGENTS.md
+parking-platform/
 
 # Dependencies
 node_modules/
