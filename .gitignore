@@ -5,6 +5,7 @@ Thumbs.db
 .env
 logs/
 conf/
+AGENTS.md
 
 # Dependencies
 node_modules/
