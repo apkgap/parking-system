@@ -9,6 +9,19 @@
 
 ---
 
+## แผนผังระบบและ Flow Chart (Site Map & Architecture)
+
+### ภาพรวมโครงสร้างและเส้นทางหน้าเว็บ (Site Map)
+![Site Map & System Architecture](docs/images/system-sitemap-flowchart.png)
+
+### Flow Chart: ระบบจองที่จอดรถสนามบิน (`/carpark/`)
+![Flow Chart ระบบจองที่จอดรถสนามบิน](docs/images/flowchart-carpark-classic.png)
+
+### Flow Chart: ระบบจองบริการเช่ารถพร้อมคนขับ (`/carrent/`)
+![Flow Chart ระบบจองบริการเช่ารถพร้อมคนขับ](docs/images/flowchart-carrent-classic.png)
+
+---
+
 ## คู่มือการใช้งานแบบ Step-by-Step
 
 ### 1. ระบบจองที่จอดรถสนามบิน (`/carpark/` — 4-Step Wizard)
