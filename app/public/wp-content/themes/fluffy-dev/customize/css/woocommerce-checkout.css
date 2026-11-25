@@ -1,0 +1,294 @@
+.woocommerce-order-pay .entry-content .v-container {
+    padding: 5em 0;
+    max-width: 600px;
+}
+.woocommerce-order-pay header.entry-header {
+    display: none;
+}
+.woocommerce #payment #place_order, .woocommerce-page #payment #place_order {
+    border-radius: 50px;
+    font-weight: 400;
+    background: #29b2e2;
+}
+.woocommerce-privacy-policy-text {
+    font-weight: 300;
+}
+.woocommerce table.shop_table th {
+    font-weight: 500;
+}
+.woocommerce table.shop_table td {
+    font-weight: 300;
+}
+.woocommerce table.shop_table tbody th, .woocommerce table.shop_table tfoot td, .woocommerce table.shop_table tfoot th {
+    font-weight: 500;
+}
+li.wc_payment_method.payment_method_2c2p img {
+    max-width: 220px;
+}
+/*order-recieve*/
+body.woocommerce-order-received {
+    background-color: #f3f4f6 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.woocommerce-order-received .entry-content,
+.woocommerce-order-received .v-container,
+.woocommerce-order-received .container {
+    max-width: 550px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+}
+
+/* Override Article/Post wrapper */
+.woocommerce-order-received article.post,
+.woocommerce-order-received .post {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Hide original header */
+.woocommerce-order-received .entry-header {
+    display: none !important;
+}
+
+/* Main Order Card */
+.woocommerce-order-received .woocommerce-order {
+    background: white !important;
+    border-radius: 16px !important;
+    padding: 32px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+/* Custom Header inside card */
+.woocommerce-order-received .woocommerce-order::before {
+    content: "Order received";
+    display: block;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 24px !important;
+    line-height: 1.4 !important;
+}
+
+/* Success Notice Override */
+.woocommerce-order-received .woocommerce-notice,
+.woocommerce-order-received .woocommerce-thankyou-order-received {
+    background: rgba(219, 234, 254, 0.603) !important;
+    border: none !important;
+    border-left: 4px solid #29B2E2 !important;
+    color: #29B2E2 !important;
+    padding: 16px 20px !important;
+    margin: 0 0 32px 0 !important;
+    border-radius: 0 8px 8px 0 !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+}
+
+/* Order Overview Grid Override */
+.woocommerce-order-received .woocommerce-order-overview {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+    list-style: none !important;
+    margin: 0 0 32px 0 !important;
+    padding: 0 !important;
+}
+
+.woocommerce-order-received .woocommerce-order-overview li {
+    background: #f9fafb !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e5e7eb !important;
+    margin: 0 !important;
+    font-size: 0.9rem !important;
+    color: #6b7280 !important;
+    line-height: 1.4 !important;
+}
+
+.woocommerce-order-received .woocommerce-order-overview li:nth-child(3),
+.woocommerce-order-received .woocommerce-order-overview li:nth-child(4) {
+    grid-column: span 2 !important;
+}
+
+.woocommerce-order-received .woocommerce-order-overview li strong {
+    display: block !important;
+    font-size: 1.1rem !important;
+    color: #29B2E2 !important;
+    margin-top: 4px !important;
+    font-weight: 600 !important;
+}
+
+.woocommerce-order-received .woocommerce-order-overview .total strong {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+}
+
+/* Order Details Title */
+.woocommerce-order-received .woocommerce-order-details__title {
+    font-size: 1.25rem !important;
+    color: #374151 !important;
+    margin: 0 0 20px 0 !important;
+    font-weight: 600 !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Table Override - สำคัญมาก! */
+.woocommerce-order-received .woocommerce-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+}
+
+.woocommerce-order-received .woocommerce-table thead {
+    display: none !important;
+}
+
+.woocommerce-order-received .woocommerce-table tbody {
+    background: transparent !important;
+    border: none !important;
+}
+
+.woocommerce-order-received .woocommerce-table tbody tr {
+    display: block !important;
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    margin: 0 0 12px 0 !important;
+    padding: 20px !important;
+}
+
+.woocommerce-order-received .woocommerce-table tbody td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    vertical-align: top !important;
+}
+
+.woocommerce-order-received .woocommerce-table .product-name {
+    color: #374151 !important;
+    font-weight: 500 !important;
+    flex: 1 !important;
+}
+
+.woocommerce-order-received .woocommerce-table .product-quantity {
+    color: #6b7280 !important;
+    font-weight: normal !important;
+    margin-left: 8px !important;
+}
+
+.woocommerce-order-received .woocommerce-table .product-total {
+    color: #29B2E2 !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    flex-shrink: 0 !important;
+}
+
+/* Table Footer Override */
+.woocommerce-order-received .woocommerce-table tfoot {
+    background: transparent !important;
+    border: none !important;
+}
+
+.woocommerce-order-received .woocommerce-table tfoot tr {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 12px 0 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    background: transparent !important;
+    margin: 0 !important;
+}
+
+.woocommerce-order-received .woocommerce-table tfoot tr:last-child {
+    border-bottom: none !important;
+    padding-top: 16px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+.woocommerce-order-received .woocommerce-table tfoot th {
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+    text-align: left !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+.woocommerce-order-received .woocommerce-table tfoot td {
+    color: #29B2E2 !important;
+    font-weight: 600 !important;
+    text-align: right !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+.woocommerce-order-received .woocommerce-table tfoot tr:last-child th,
+.woocommerce-order-received .woocommerce-table tfoot tr:last-child td {
+    color: #374151 !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+}
+
+/* Price Styling Override */
+.woocommerce-order-received .woocommerce-Price-amount,
+.woocommerce-order-received .amount {
+    color: #29B2E2 !important;
+    font-weight: 600 !important;
+}
+
+.woocommerce-order-received .woocommerce-Price-currencySymbol {
+    margin-right: 2px !important;
+}
+.woocommerce ul.order_details::after, .woocommerce ul.order_details::before {
+    content: unset;
+}
+/* Remove any unwanted margins/paddings from theme */
+.woocommerce-order-received .site-main,
+.woocommerce-order-received .content-area,
+.woocommerce-order-received .site-content {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+@media (max-width: 1024px) {
+    .woocommerce-order-pay .entry-content .v-container {
+        padding: 2em;
+    }
+}
+@media (max-width: 768px) {
+    .woocommerce-order-pay .entry-content .v-container {
+        padding: 2em 1.5em;
+    }
+    .woocommerce-order-received .entry-content,
+    .woocommerce-order-received .v-container,
+    .woocommerce-order-received .container {
+        padding: 10px !important;
+    }
+
+    .woocommerce-order-received .woocommerce-order {
+        padding: 24px !important;
+    }
+
+    .woocommerce-order-received .woocommerce-order-overview {
+        grid-template-columns: 1fr !important;
+    }
+
+    .woocommerce-order-received .woocommerce-order-overview li:nth-child(3),
+    .woocommerce-order-received .woocommerce-order-overview li:nth-child(4) {
+        grid-column: span 1 !important;
+    }
+}

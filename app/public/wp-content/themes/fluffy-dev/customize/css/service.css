@@ -1,0 +1,143 @@
+    /* Custom Select2 Styling */
+    .select2-container {
+        width: 100% !important;
+    }
+    
+    .select2-container--default .select2-selection--single {
+        height: 48px !important;
+        border: 2px solid #e5e7eb !important;
+        border-radius: 8px !important;
+        padding: 0 12px !important;
+        background: #ffffff !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    .select2-container--default .select2-selection--single:hover {
+        border-color: #29b2e2 !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15) !important;
+    }
+    
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #29b2e2 !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        outline: none !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 44px !important;
+        padding-left: 8px !important;
+        color: #374151 !important;
+        font-size: 16px !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #9ca3af !important;
+        font-style: italic !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 44px !important;
+        right: 8px !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        border-color: #29b2e2 transparent transparent transparent !important;
+        border-width: 6px 5px 0 5px !important;
+    }
+    
+    /* Dropdown styling */
+    .select2-dropdown {
+        border: 2px solid #29b2e2 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+        background: #ffffff !important;
+    }
+    
+    .select2-container--default .select2-results__option {
+        padding: 12px 16px !important;
+        font-size: 16px !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #29b2e2 !important;
+        color: white !important;
+    }
+    
+    .select2-container--default .select2-results__option[aria-selected=true] {
+        background-color: #f3f4f6 !important;
+        color: #374151 !important;
+    }
+    
+    .select2-search--dropdown .select2-search__field {
+        border: 1px solid #e5e7eb !important;
+        border-radius: 6px !important;
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+    }
+    
+    .select2-search--dropdown .select2-search__field:focus {
+        border-color: #29b2e2 !important;
+        outline: none !important;
+    }
+    
+    /* Button hover effect */
+    button[type="submit"]:hover {
+        background: linear-gradient(135deg, #5a67d8 0%, #29b2e2 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+    }
+    
+    button[type="submit"]:active {
+        transform: translateY(0) !important;
+    }
+    button.select2-selection__clear {
+    display: none;
+}
+    /* Results styling */
+    .no-result { 
+        color: #ef4444; 
+        font-weight: 600; 
+        text-align: center;
+        padding: 20px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+    }
+    
+    table.pricing-table {
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    table.pricing-table th, table.pricing-table td {
+        border: 1px solid #e5e7eb; 
+        padding: 12px 16px; 
+        text-align: left;
+    }
+    
+    table.pricing-table th {
+        background: linear-gradient(135deg, #29b2e2 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        text-align: center;
+    }
+    
+    table.pricing-table td {
+        background: #ffffff;
+        transition: background-color 0.2s ease;
+    }
+    
+    table.pricing-table tr:hover td {
+        background: #f8fafc;
+    }
+    
+    /* Loading animation */
+    .loading::after {
+        border-color: #29b2e2 !important;
+    }

@@ -1,0 +1,45 @@
+name: Deploy Theme to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: Build React & Deploy Theme via FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: app/public/wp-content/themes/fluffy-dev/package-lock.json
+
+      - name: Install dependencies & build React bundles
+        working-directory: app/public/wp-content/themes/fluffy-dev
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy theme files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: app/public/wp-content/themes/fluffy-dev/
+          server-dir: ${{ secrets.FTP_THEME_DIR }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/src/**
+            package.json
+            package-lock.json
+            AGENTS.md

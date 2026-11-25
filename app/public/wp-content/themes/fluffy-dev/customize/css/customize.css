@@ -1,0 +1,830 @@
+:root{
+     --color-base-content: #000000;
+     --color-primary: #29B2E2;
+     --color-primary-content: #FFFFFF;
+     --color-secondary: #022150;
+     --color-secondary-content: #FFFFFF;
+     --color-accent: #F59E0B;
+     --color-accent-content: #1F2937;
+     --color-neutral: #6B7280;
+     --color-neutral-content: #FFFFFF;
+     --color-info: #06B6D4;
+     --color-info-content: #FFFFFF;
+     --color-success: #10B981;
+     --color-success-content: #FFFFFF;
+     --color-warning: #F59E0B;
+     --color-warning-content: #1F2937;
+     --color-error: #EF4444;
+     --color-error-content: #FFFFFF;
+}
+input, select, textarea {
+    outline: none !important;
+}
+ .button-container {
+     display: flex;
+     gap: 20px;
+     background-color: #ffffff;
+     padding: 20px;
+     border-radius: 50px;
+     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+     transition: transform 0.3s ease-in-out;
+     max-width: 800px;
+     width: 100%;
+     margin: 0 auto;
+}
+ .booking-button {
+     font-size: 1.7rem;
+     font-weight: 500;
+     color: #ffffff;
+     padding: 18px 40px;
+     border: none;
+     border-radius: 40px;
+     cursor: pointer;
+     transition: background-color 0.3s ease, transform 0.2s ease;
+     outline: none;
+     width: 100%;
+     display: flex;
+     align-items: center;
+     gap: 15px;
+     justify-content: center;
+}
+ .booking-button img {
+     height: 38px;
+     width: 38px;
+}
+ .primary-button {
+     background-color: #2196F3;
+     box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+}
+ .primary-button:hover {
+     background-color: #1976D2;
+     transform: translateY(-3px);
+}
+ .secondary-button {
+     background-color: #FF9800;
+     box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+}
+ .secondary-button:hover {
+     background-color: #FB8C00;
+     transform: translateY(-3px);
+}
+ .booking-button:focus {
+     box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.5);
+}
+ .secondary-button:focus {
+     box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.5);
+}
+ .booking-button:after {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     border-radius: 40px;
+     box-shadow: inset 0 0 0 0px rgba(255, 255, 255, 0.4);
+    /* Inner #ffffff glow */
+     transition: box-shadow 0.3s ease;
+}
+ .booking-button:hover:after {
+     box-shadow: inset 0 0 15px 3px rgba(255, 255, 255, 0.4);
+    /* Glow on hover */
+}
+ .box-loading {
+     position: fixed;
+     top: 0;
+     height: 100%;
+     width: 100%;
+     display: flex;
+     z-index: 1000;
+     background: #ffffffc2;
+     align-items: center;
+     justify-content: center;
+}
+ .blur {
+     background: rgba(255, 255, 255, 0.01);
+     backdrop-filter: blur(5px) saturate(120%);
+     -webkit-backdrop-filter: saturate(120%);
+     position: fixed;
+     top: 0;
+     left: 0;
+     display: block;
+     bottom: 0;
+     right: 0;
+     opacity: 1;
+}
+ .loader {
+     z-index: 9;
+}
+ .box-booking {
+     padding: 5em 0;
+}
+ .loader {
+     --c1:#FF9800;
+     --c2:#29b2e2;
+     width: 40px;
+     height: 80px;
+     border-top: 8px solid var(--c1);
+     border-bottom: 8px solid var(--c1);
+     background: linear-gradient(90deg, var(--c1) 2px, var(--c2) 0 5px,var(--c1) 0) 50%/7px 8px no-repeat;
+     display: grid;
+     overflow: hidden;
+     animation: l5-0 2s infinite linear;
+}
+ .loader::before, .loader::after {
+     content: "";
+     grid-area: 1/1;
+     width: 75%;
+     height: calc(50% - 4px);
+     margin: 0 auto;
+     border: 2px solid var(--c1);
+     border-top: 0;
+     box-sizing: content-box;
+     border-radius: 0 0 40% 40%;
+     /* Standard mask property for better compatibility */
+    mask: linear-gradient(#000 0 0) bottom/4px 2px no-repeat, linear-gradient(#000 0 0);
+    -webkit-mask: linear-gradient(#000 0 0) bottom/4px 2px no-repeat, linear-gradient(#000 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+     background: linear-gradient(var(--d,0deg),var(--c2) 50%,#0000 0) bottom /100% 205%, linear-gradient(var(--c2) 0 0) center/0 100%;
+     background-repeat: no-repeat;
+     animation: inherit;
+     animation-name: l5-1;
+}
+ .loader::after {
+     transform-origin: 50% calc(100% + 2px);
+     transform: scaleY(-1);
+     --s:3px;
+     --d:180deg;
+}
+ @keyframes l5-0 {
+     80% {
+        transform: rotate(0)
+    }
+     100% {
+        transform: rotate(0.5turn)
+    }
+}
+ @keyframes l5-1 {
+     10%,70% {
+        background-size:100% 205%,var(--s,0) 100%
+    }
+     70%,100% {
+        background-position: top,center
+    }
+}
+/*form*/
+ .input_start_time, .input_end_time,
+ .input_sending_flight_depart_time,
+.input_sending_flight_arrival_time,
+.input_sending_pickup_time,
+.input_sending_dropoff_time,
+.input_flight_depart_time,
+.input_flight_arrival_time,
+.input_pickup_time,
+.input_dropoff_time  {
+     position: absolute;
+     width: 300px;
+     top: 100%;
+     z-index: 10;
+}
+ .grid-cols-2 {
+     display: grid;
+     gap: 16px;
+}
+ .picker-cell__header {
+     color: #000;
+}
+ .picker-item {
+     color: #000;
+}
+ .picker-picked {
+     color: #29b2e2;
+}
+ .picker-cell__control:before {
+     border-color: #29b2e2;
+     /* Standard transform property for better compatibility */
+    transform: translate(-50%,-50%) rotate(-45deg) scale(1.2);
+    -webkit-transform: translate(-50%,-50%) rotate(-45deg) scale(1.2);
+}
+ @media (min-width: 640px) {
+     .grid-cols-2 {
+         grid-template-columns: repeat(2, 1fr);
+    }
+}
+ .add-row-button {
+     display: inline-flex;
+     align-items: center;
+     font-size: 0.9rem;
+     color: #29b2e2;
+     font-weight: 300;
+     cursor: pointer;
+     margin-top: 10px;
+     transition: color 0.2s;
+}
+ .submit-button {
+    display: block;
+    width: 100%;
+    padding: 1.1rem 0;
+    background: linear-gradient(90deg, #29b2e2 0%, #10b981 100%);
+    color: #fff;
+    border-radius: 2.5rem;
+    font-size: 1.15rem;
+    font-weight: 300;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 4px 16px 0 rgba(41,178,226,0.10), 0 1.5px 4px 0 rgba(16,185,129,0.10);
+    letter-spacing: 0.02em;
+    transition: 
+        background 0.25s cubic-bezier(.4,0,.2,1),
+        box-shadow 0.2s cubic-bezier(.4,0,.2,1),
+        transform 0.15s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    overflow: hidden;
+}
+.submit-button:hover, .submit-button:focus {
+    background: linear-gradient(90deg, #10b981 0%, #29b2e2 100%);
+    box-shadow: 0 8px 24px 0 rgba(41,178,226,0.18), 0 3px 8px 0 rgba(16,185,129,0.15);
+    transform: translateY(-2px) scale(1.03);
+    outline: none;
+}
+.submit-button:active {
+    animation: btn-press 0.13s cubic-bezier(.4,0,.2,1);
+    transform: scale(0.97);
+}
+.submit-button::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 2.7rem;
+    background: linear-gradient(90deg, #29b2e2 0%, #10b981 100%);
+    opacity: 0.3;
+    z-index: 0;
+    filter: blur(8px);
+    transition: opacity 0.3s;
+    pointer-events: none;
+    animation: btn-glow 2s linear infinite;
+}
+@keyframes btn-press {
+    0% { transform: scale(1);}
+    50% { transform: scale(0.96);}
+    100% { transform: scale(1);}
+}
+@keyframes btn-glow {
+    0% { filter: blur(8px) brightness(1);}
+    50% { filter: blur(12px) brightness(1.2);}
+    100% { filter: blur(8px) brightness(1);}
+}
+.add-row-button:active {
+    animation: btn-press 0.13s cubic-bezier(.4,0,.2,1);
+    transform: scale(0.97);
+}
+.add-row-button:hover::before,
+.add-row-button:focus::before {
+    opacity: 0.6;
+}
+
+.submit-button, .add-row-button {
+    z-index: 1;
+}
+.submit-button > *, .add-row-button > * {
+    position: relative;
+    z-index: 1;
+}
+ /* .hidden {
+     display: none;
+} */
+ .picker-container {
+     position: relative;
+}
+ .picker-dialog {
+     z-index: 1000;
+}
+ .form-container {
+     padding: 2rem;
+     border-radius: 0.75rem;
+     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+ .input-group, .input-groupx {
+     position: relative;
+}
+ .input-group label, .input-groupx label {
+     display: block;
+     font-weight: 500;
+     color: #4a5568;
+     margin-bottom: 0.5rem;
+}
+ .input-group input {
+     position: relative;
+     overflow: hidden;
+     width: 100%;
+}
+ .input-field {
+     width: 100%;
+     padding: 0.75rem 1rem;
+     border: 1px solid #cbd5e0;
+     border-radius: 0.5rem;
+     font-size: 1rem;
+     color: #2d3748;
+     box-sizing: border-box;
+}
+ .input-fieldx {
+     padding: 0.75rem 1rem;
+     border: 1px solid #cbd5e0;
+     border-radius: 0.5rem;
+     font-size: 1rem;
+     color: #2d3748;
+     box-sizing: border-box;
+     background: #fff;
+}
+ .input-field:focus, .input-fieldx:focus {
+     outline: none;
+     border-color: var(--color-primary);
+     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+ .grid-cols-2 {
+     display: grid;
+     grid-template-columns: repeat(2, 1fr);
+     gap: 1rem;
+}
+ .add-row-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    color: var(--color-primary);
+    border-radius: 0.5rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all ease-in-out 350ms;
+    border: none;
+    padding: 0;
+    text-align: left;
+    margin: 0;
+    margin-top: -20px;
+}
+ .add-row-button:hover {
+     opacity: 0.7;
+}
+ .add-row-button svg {
+    width: 30px;
+    height: 30px;
+}
+ .submit-button {
+     display: block;
+     width: 100%;
+     padding: 1rem;
+     background-color: #10b981;
+     color: #ffffff;
+     border-radius: 0.5rem;
+     font-size: 1.125rem;
+     font-weight: 300;
+     cursor: pointer;
+     transition: all ease-in-out 350ms;
+     border: none;
+}
+ .submit-button:hover {
+     background-color: #059669;
+}
+ .other-car-type-input {
+     grid-column: span 2;
+}
+ #parking-grid-container {
+     display: grid;
+     grid-auto-rows: minmax(32px, 1fr);
+}
+ .parking-space-cell {
+    width: 26px;
+    height: 26px;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 300;
+    color: #4a5568;
+    position: relative;
+}
+ .parking-space-cell:hover {
+     transform: scale(1.1);
+     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+ .parking-space-cell.occupied {
+     background-color: #ef4444;
+     color: #ffffff;
+     cursor: not-allowed;
+     pointer-events: none;
+}
+ .parking-space-cell.available {
+     background-color: #22c55e;
+     color: #ffffff;
+}
+ .parking-space-cell.selected {
+     background-color: #93c5fd;
+     color: #1e3a8a;
+     border-color: #3b82f6;
+     box-shadow: 0 0 0 3px #3b82f6;
+}
+ .parking-space-cell input {
+     background-color: transparent;
+     border: none;
+     text-align: center;
+     color: inherit;
+     width: 100%;
+     height: 100%;
+     font-size: 0.75rem;
+     font-weight: 300;
+     padding: 0;
+     margin: 0;
+}
+ .parking-space-cell input::placeholder {
+     color: rgba(74, 85, 104, 0.7);
+}
+ .parking-space-cell input:focus {
+     outline: none;
+}
+ .parking-space-cell.path {
+     background-color: #f3f4f6;
+     border-color: #d1d5db;
+     cursor: default;
+     pointer-events: none;
+}
+ .picker {
+     position: relative !important;
+     top: 0 !important;
+     left: 0 !important;
+     box-shadow: none !important;
+}
+ .license-plates-container .input-field {
+     background: #fff;
+}
+ .quantity-display {
+     font-weight: bold;
+     text-align: center;
+     color: #29b2e2;
+     border-radius: 50px;
+}
+ span.cc-t {
+     font-weight: 500;
+     text-align: center;
+     margin-top: 3px;
+     color: #29b2e2;
+     background: #e3f3f9;
+     padding: 2px 15px;
+     border-radius: 50px;
+     font-size: 14px;
+     display: flex;
+     align-items: center;
+     gap: 10px;
+     line-height: 1.6;
+     justify-content: center;
+}
+ .input-group {
+     position: relative;
+}
+ .license-plates-container {
+     grid-template-columns: repeat(1, 1fr);
+}
+ .license-plates-container.grid-cols-3 {
+     grid-template-columns: repeat(3, 1fr);
+}
+ .license-plates-container .input-field {
+     margin-bottom: 0.5rem;
+}
+ div#selected-space-info {
+     display: none !important;
+}
+.box-f_btn {
+    max-width: 200px;
+    margin: 0 auto;
+    width: 100%;
+    gap: 20px;
+}
+ 
+/* Custom animations and effects only */
+ .gradient-bg {
+     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+}
+ .gradient-text {
+    background: linear-gradient(135deg, #29b2e2 40%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+ .glass-effect {
+     background: rgba(255, 255, 255, 0.95);
+     backdrop-filter: blur(20px);
+     -webkit-backdrop-filter: blur(20px);
+}
+ .btn-shimmer {
+     position: relative;
+     overflow: hidden;
+}
+ .btn-shimmer::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: -100%;
+     width: 100%;
+     height: 100%;
+     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+     transition: left 0.6s;
+}
+ .btn-shimmer:hover::before {
+     left: 100%;
+}
+#ty-page h2 {
+    color: rgb(14 193 149);
+}
+
+/* Enhanced loader animation - now using Tailwind classes */
+
+@-webkit-keyframes float {
+    0%, 100% {
+        -webkit-transform: translateY(0px);
+        transform: translateY(0px);
+   }
+    50% {
+        -webkit-transform: translateY(-20px);
+        transform: translateY(-20px);
+   }
+}
+@keyframes float {
+    0%, 100% {
+        -webkit-transform: translateY(0px);
+        transform: translateY(0px);
+   }
+    50% {
+        -webkit-transform: translateY(-20px);
+        transform: translateY(-20px);
+   }
+}
+
+@-webkit-keyframes slideIn {
+    from {
+        opacity: 0;
+        -webkit-transform: translateY(30px);
+        transform: translateY(30px);
+   }
+    to {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+   }
+}
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        -webkit-transform: translateY(30px);
+        transform: translateY(30px);
+   }
+    to {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+   }
+}
+
+@-webkit-keyframes fadeIn {
+    from {
+        opacity: 0;
+   }
+    to {
+        opacity: 1;
+   }
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+   }
+    to {
+        opacity: 1;
+   }
+}
+
+@-webkit-keyframes fadeOut {
+    from {
+        opacity: 1;
+   }
+    to {
+        opacity: 0;
+   }
+}
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+   }
+    to {
+        opacity: 0;
+   }
+}
+
+@-webkit-keyframes shake {
+    0%, 100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+   }
+    25% {
+        -webkit-transform: translateX(-5px);
+        transform: translateX(-5px);
+   }
+    75% {
+        -webkit-transform: translateX(5px);
+        transform: translateX(5px);
+   }
+}
+@keyframes shake {
+    0%, 100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+   }
+    25% {
+        -webkit-transform: translateX(-5px);
+        transform: translateX(-5px);
+   }
+    75% {
+        -webkit-transform: translateX(5px);
+        transform: translateX(5px);
+   }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.6s ease-out;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-fade-out {
+    animation: fadeOut 0.3s ease-in-out;
+}
+
+.error {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Loading button styles */
+button.loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+    transition: opacity 0.2s ease;
+}
+
+button.loading:hover {
+    transform: none;
+}
+
+/* Animation for spin */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+/* Custom sizes not in Tailwind */
+ .w-30 {
+     width: 7.5rem;
+}
+ .h-30 {
+     height: 7.5rem;
+}
+ .w-15 {
+     width: 3.75rem;
+}
+ .h-15 {
+     height: 3.75rem;
+}
+.form-checkbox {
+    border: 2px solid var(--color-primary);
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding: 0;
+}
+.primary-rentcar select.input-field {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+/* Removed range styles as range inputs have been replaced with number inputs */
+button#carrent-search-btn {
+    height: 48px !important;
+    padding: 0 12px !important;
+}
+div#error-message {
+    justify-content: center;
+}
+.checkin-box{
+    width: 100%;
+    height: 100%;
+}
+.checkin-box svg{
+    width: 100%;
+    height: 100%;
+}
+
+/* Center content inside the QR Code scanner library */
+/* #qr-reader {
+    text-align: center;
+}
+#qr-reader div[style] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+} */
+#qr-reader__scan_region{
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+#line-icon svg {
+    fill: #fff;
+    width: 25px;
+    height: 25px;
+}
+/*ipad (tablet)*/
+ @media (max-width: 1028px) {
+     .booking-button {
+         font-size: 18px;
+    }
+     .booking-button img {
+         height: 28px;
+         width: 28px;
+    }
+.input_start_time, .input_end_time,.input_sending_flight_depart_time,
+.input_sending_flight_arrival_time,
+.input_sending_pickup_time,
+.input_sending_dropoff_time,
+.input_flight_depart_time,
+.input_flight_arrival_time,
+.input_pickup_time,
+.input_dropoff_time  {
+         width: 100%;
+    }
+    .parking-space-cell {
+        width: 32px;
+        height: 32px;
+    }
+}
+/*iphone5 (small smartphone)*/
+ @media (max-width: 767px) {
+     .button-container {
+         flex-direction: column;
+         border-radius: 15px;
+    }
+     .booking-button {
+         padding: 10px 20px;
+    }
+     .booking-button img {
+         height: 28px;
+         width: 28px;
+    }
+    .form-container {
+        padding: 20px;
+    }
+}
+
+/* Quantity Increment/Decrement Button Styles */
+.quantity-increase,
+.quantity-decrease {
+    min-width: 36px;
+    height: 36px;
+    padding: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.quantity-increase:hover,
+.quantity-decrease:hover {
+    border-color: #29B2E2;
+    background-color: #e0f2fe;
+    color: #29B2E2;
+}
+
+.quantity-increase:active,
+.quantity-decrease:active {
+    background-color: #bae6fd;
+    border-color: #0284c7;
+}
+
+.quantity-increase svg,
+.quantity-decrease svg {
+    stroke-width: 2.5;
+}

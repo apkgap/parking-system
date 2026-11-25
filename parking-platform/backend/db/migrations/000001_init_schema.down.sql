@@ -1,0 +1,21 @@
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS ride_assignments;
+DROP TABLE IF EXISTS drivers;
+DROP TABLE IF EXISTS car_rentals;
+DROP TABLE IF EXISTS rental_packages;
+DROP TABLE IF EXISTS parking_checklists;
+DROP TABLE IF EXISTS parking_bookings;
+DROP TABLE IF EXISTS coupons;
+DROP TABLE IF EXISTS customer_vehicles;
+DROP TABLE IF EXISTS parking_blackouts;
+DROP TABLE IF EXISTS parking_spaces;
+DROP TABLE IF EXISTS vehicle_types;
+DROP TABLE IF EXISTS locations;
+DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS users;
+
+DROP TYPE IF EXISTS ride_job_status;
+DROP TYPE IF EXISTS driver_status;
+DROP TYPE IF EXISTS payment_status;
+DROP TYPE IF EXISTS booking_status;
+DROP TYPE IF EXISTS user_role;

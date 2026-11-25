@@ -1,0 +1,60 @@
+
+// add_action('init', 'update_parking_spaces_position_acf');
+
+// function update_parking_spaces_position_acf() {
+//     // กำหนดขนาดและระยะห่างของแต่ละช่อง
+//     $space_width = 50;  // ขนาดของแต่ละช่อง (เช่น 50 พิกเซล)
+//     $space_height = 50; // ขนาดของแต่ละช่อง (เช่น 50 พิกเซล)
+//     $gap = 10;          // ระยะห่างระหว่างช่อง (เช่น 10 พิกเซล)
+//     $start_x_offset = 10; // ระยะเยื้องเริ่มต้นจากซ้าย (เช่น 10 พิกเซล)
+//     $start_y_offset = 10; // ระยะเยื้องเริ่มต้นจากบน (เช่น 10 พิกเซล)
+
+//     // กำหนดโครงสร้างแถวและจำนวนช่องในแต่ละแถวตามภาพ
+//     // และเพิ่ม 'start_x_adjust' สำหรับการเยื้องของแต่ละแถว
+//     $rows_config = [
+//         'a' => ['count' => 26, 'start_x_adjust' => 0], // แถว a เริ่มต้นที่ x offset 0
+//         'b' => ['count' => 23, 'start_x_adjust' => 3], // แถว b เยื้องจากซ้ายไป 3 ช่อง
+//         'c' => ['count' => 23, 'start_x_adjust' => 3],
+//         'd' => ['count' => 23, 'start_x_adjust' => 3],
+//         'e' => ['count' => 23, 'start_x_adjust' => 3],
+//         'f' => ['count' => 19, 'start_x_adjust' => 7], // แถว f เยื้องไป 7 ช่อง
+//     ];
+
+//     $current_y = $start_y_offset;
+
+//     foreach ($rows_config as $category => $row_info) {
+//         $count = $row_info['count'];
+//         $start_x_adjust = $row_info['start_x_adjust'];
+//         $current_x = $start_x_offset + ($start_x_adjust * ($space_width + $gap));
+
+//         for ($i = 1; $i <= $count; $i++) {
+//             $post_title = $category . $i;
+
+//             // ค้นหา post ที่มีอยู่แล้วด้วย post_title
+//             $existing_post = get_page_by_title($post_title, OBJECT, 'parking_space');
+
+//             if ($existing_post) {
+//                 $post_id = $existing_post->ID;
+
+//                 // คำนวณ x, y สำหรับช่องปัจจุบัน
+//                 $x_position = $current_x;
+//                 $y_position = $current_y;
+
+//                 // อัปเดต ACF fields 'position_x' และ 'position_y'
+//                 update_field('position_x', $x_position, $post_id);
+//                 update_field('position_y', $y_position, $post_id);
+
+//                 // ตั้งค่า parking_space_status เป็น 'available' สำหรับทุกช่อง
+//                 update_field('parking_space_status', 'available', $post_id); 
+                
+//                 $current_x += ($space_width + $gap);
+//             }
+//         }
+//         $current_y += ($space_height + $gap);
+//     }
+
+//     // คุณสามารถเพิ่ม update_option เพื่อให้โค้ดนี้รันเพียงครั้งเดียวหลังจากการอัปเดต
+//      update_option('parking_spaces_positions_updated_all_green', true);
+//     // และเพิ่ม if (get_option('parking_spaces_positions_updated_all_green')) { return; }
+//     // ที่ต้นฟังก์ชันเพื่อป้องกันการรันซ้ำ
+// }

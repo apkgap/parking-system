@@ -1,0 +1,19 @@
+{
+  "name": "fluffy-dev",
+  "version": "2.6.0",
+  "description": "Fluffy WordPress Theme with React (@wordpress/scripts) for Booking & Member Systems",
+  "private": true,
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build",
+    "lint:js": "wp-scripts lint-js src/react",
+    "format": "wp-scripts format src/react"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.15.0"
+  },
+  "dependencies": {
+    "date-fns": "^4.4.0",
+    "react-day-picker": "^10.0.2"
+  }
+}
