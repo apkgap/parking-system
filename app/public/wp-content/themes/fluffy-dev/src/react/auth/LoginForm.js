@@ -2,12 +2,13 @@ import { useState } from '@wordpress/element';
 import { getConfig, wpAjax } from '../shared/api';
 import { t } from '../shared/i18n';
 
-export default function LoginForm({ onNotify }) {
+export default function LoginForm() {
 	const config = getConfig();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [rememberme, setRememberme] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [errorMsg, setErrorMsg] = useState('');
 
 	if (config.user?.isLoggedIn) {
 		return (
@@ -35,8 +36,9 @@ export default function LoginForm({ onNotify }) {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setErrorMsg('');
 		if (!username.trim() || !password) {
-			onNotify('error', t('กรอกข้อมูลไม่ครบ', 'Missing Info'), t('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน', 'Please enter your username and password.'));
+			setErrorMsg(t('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน', 'Please enter your username and password.'));
 			return;
 		}
 		setLoading(true);
@@ -47,17 +49,20 @@ export default function LoginForm({ onNotify }) {
 				password,
 				rememberme: rememberme ? 'true' : 'false',
 			});
-			onNotify('success', t('เข้าสู่ระบบสำเร็จ', 'Success'), data?.message || t('กำลังพาไปยังหน้าหลัก...', 'Redirecting...'));
 			window.location.href = data?.redirect_url || config.homeUrl;
 		} catch (err) {
-			onNotify('error', t('เข้าสู่ระบบไม่สำเร็จ', 'Login Failed'), err.message);
-		} finally {
+			setErrorMsg(err.message || t('เข้าสู่ระบบไม่สำเร็จ', 'Login failed.'));
 			setLoading(false);
 		}
 	};
 
 	return (
 		<form id="fluffy-login-form" className="space-y-4" onSubmit={handleSubmit}>
+			{errorMsg && (
+				<div id="fluffy-login-error" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+					{errorMsg}
+				</div>
+			)}
 			<div>
 				<label htmlFor="fluffy-login-username" className="mb-1.5 block text-sm font-medium text-gray-700">
 					{t('ชื่อผู้ใช้ หรือ อีเมล', 'Username or Email')}
