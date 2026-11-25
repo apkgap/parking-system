@@ -18,17 +18,10 @@ $footer_info = function_exists( 'get_field' ) ? (string) get_field( 'footer_info
 				<!-- Brand & Description -->
 				<div id="fluffy-footer-brand" class="fluffy-footer__brand md:col-span-5">
 					<div class="fluffy-footer__logo mb-3">
-						<?php if ( is_array( $footer_logo ) && ! empty( $footer_logo['url'] ) ) : ?>
-							<img src="<?php echo esc_url( $footer_logo['url'] ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" class="h-9 w-auto">
-						<?php elseif ( has_custom_logo() ) : ?>
-							<div class="[&_img]:h-9 [&_img]:w-auto">
-								<?php the_custom_logo(); ?>
-							</div>
-						<?php else : ?>
-							<a id="fluffy-footer-brand-link" class="fluffy-footer__brand-name text-lg font-bold text-[#0F172A] no-underline" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-								<?php echo esc_html( get_bloginfo( 'name' ) ); ?>
-							</a>
-						<?php endif; ?>
+						<a id="fluffy-footer-brand-link" class="fluffy-footer__brand-name inline-flex items-center gap-2.5 text-lg font-bold text-[#0F172A] no-underline" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+							<img src="<?php echo esc_url( get_template_directory_uri() . '/customize/img/brand-logo.svg' ); ?>" alt="Parking System" class="h-8 w-8 rounded-lg">
+							<span>Parking System</span>
+						</a>
 					</div>
 					<p class="fluffy-footer__desc max-w-sm text-sm leading-relaxed text-[#64748B]">
 						<?php
@@ -120,7 +113,7 @@ $footer_info = function_exists( 'get_field' ) ? (string) get_field( 'footer_info
 			<!-- Bottom Bar -->
 			<div id="fluffy-footer-bottom" class="fluffy-footer__bottom mt-10 flex flex-col items-center justify-between gap-4 border-t border-[#E2E8F0] pt-6 sm:flex-row">
 				<p class="fluffy-footer__copyright m-0 text-xs text-[#64748B]">
-					&copy; <?php echo esc_html( gmdate( 'Y' ) . ' ' . get_bloginfo( 'name' ) ); ?>. <?php yp_text( 'สงวนลิขสิทธิ์', 'All rights reserved.' ); ?>
+					&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> Parking System. <?php yp_text( 'สงวนลิขสิทธิ์', 'All rights reserved.' ); ?>
 				</p>
 				<div id="fluffy-footer-social" class="fluffy-footer__social flex items-center gap-3 text-xs text-[#64748B]">
 					<?php echo do_shortcode( '[social_list]' ); ?>

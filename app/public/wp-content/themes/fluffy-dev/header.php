@@ -33,15 +33,10 @@ $user_initials      = $current_user ? strtoupper( mb_substr( (string) $current_u
 		<div id="fluffy-header-inner" class="fluffy-header__inner mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
 			<!-- Brand -->
 			<div id="fluffy-header-brand" class="fluffy-header__brand flex items-center">
-				<?php if ( has_custom_logo() ) : ?>
-					<div class="fluffy-header__logo site-branding [&_img]:h-9 [&_img]:w-auto">
-						<?php the_custom_logo(); ?>
-					</div>
-				<?php else : ?>
-					<a id="fluffy-brand-link" class="fluffy-header__brand-name text-lg font-bold tracking-tight text-[#0F172A] no-underline" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-						<?php echo esc_html( get_bloginfo( 'name' ) ); ?>
-					</a>
-				<?php endif; ?>
+				<a id="fluffy-brand-link" class="fluffy-header__brand-name inline-flex items-center gap-2.5 text-lg font-bold tracking-tight text-[#0F172A] no-underline" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+					<img src="<?php echo esc_url( get_template_directory_uri() . '/customize/img/brand-logo.svg' ); ?>" alt="Parking System" class="h-8 w-8 rounded-lg">
+					<span>Parking System</span>
+				</a>
 			</div>
 
 			<!-- Desktop Navigation -->
