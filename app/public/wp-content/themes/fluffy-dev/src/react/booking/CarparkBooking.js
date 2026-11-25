@@ -767,7 +767,7 @@ export default function CarparkBooking() {
 								<section id="fluffy-parking-map-card" className="fluffy-saas-card">
 							<div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 								<div>
-									<h2 className="text-base font-semibold text-[#0F172A]">{t('3. ผังเลือกช่องจอดรถ', '3. Parking Space Map')}</h2>
+									<h2 className="text-base font-semibold text-[#0F172A]">{t('2. ผังเลือกช่องจอดรถ', '2. Parking Space Map')}</h2>
 									<p className="text-xs text-[#64748B]">
 										{t(`เลือกแล้ว ${selectedSpaces.length} / ${totalVehicles} ช่อง`, `Selected ${selectedSpaces.length} / ${totalVehicles} space(s)`)}
 									</p>

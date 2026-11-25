@@ -3,6 +3,14 @@ import { getConfig, wpRest } from '../shared/api';
 import { t } from '../shared/i18n';
 import { BookingListSkeleton } from '../shared/Skeleton';
 
+const decodeHtml = (value) => {
+	if (typeof value !== 'string' || !value.includes('&')) {
+		return value || '';
+	}
+	const doc = new DOMParser().parseFromString(value, 'text/html');
+	return doc.documentElement.textContent || value;
+};
+
 const STATUS_BADGES = {
 	confirmed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
 	'checked-in': 'bg-[var(--fluffy-primary-soft)] text-[var(--fluffy-primary)] border border-indigo-200',
@@ -198,10 +206,11 @@ export default function CustomerProfile() {
 								{bookings.map((item, idx) => {
 									const statusKey = (item.tracking_check_status || item.status || 'pending').toLowerCase();
 									const badgeClass = STATUS_BADGES[statusKey] || 'bg-slate-100 text-slate-700';
-									const locationLabel =
+									const rawLocationLabel =
 										typeof item.location_park === 'object' && item.location_park !== null
 											? item.location_park.name || item.location_park.slug
 											: item.location_park || item.title;
+									const locationLabel = decodeHtml(rawLocationLabel);
 									return (
 										<div
 											id={`fluffy-booking-item-${item.id || idx}`}
