@@ -763,7 +763,7 @@ function enqueue_parking_scripts()
     wp_localize_script('space-parking-script', 'ajaxurl_obj', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
         'line_oa_link' => get_field('line_oa_link', 'option') ?: 'https://lin.ee/Bm45y3b',
-        'line_oa_id'   => get_field('line_oa_id', 'option') ?: '@okparking24'
+        'line_oa_id'   => get_field('line_oa_id', 'option') ?: '@parkingsystem'
     ));
 
     // Provide a nonce for parking price calculation AJAX
@@ -2131,10 +2131,10 @@ function generate_parking_booking_email_template($booking_data, $order_code, $po
           <!-- Title -->
            <tr>
             <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-              <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+              <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
               <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Dear ' . $full_name . ',</div>
               <div style="font-size:13px; color:#666;">
-              OK Parking is pleased to confirm that your payment for booking number ' . $order_code . '<BR>has been successfully verified, and your reservation is now complete.
+              Parking System is pleased to confirm that your payment for booking number ' . $order_code . '<BR>has been successfully verified, and your reservation is now complete.
               </div>
             </td>
           </tr>
@@ -2327,10 +2327,10 @@ staff immediately via LINE.</div>
             <td bgcolor="#29b2e2" align="center" style="padding:28px 24px; color:#ffffff;">
               <div style="font-size:18px; font-weight:bold; margin-bottom:10px;">Need Help? We’re Here for You!</div>
               <div style="font-size:14px; font-weight:bold; margin-bottom:10px;">If you have any questions or need assistance, please feel free to reach us</div>
-              <div style="font-size:14px; margin-bottom:15px;">LINE Official Account: @okparking24</div>
+              <div style="font-size:14px; margin-bottom:15px;">LINE Official Account: @parkingsystem</div>
               <div style="font-size:14px; margin-bottom:15px;">Phone: +6696-286-4050</div>
-              <div style="font-size:14px; margin-bottom:15px;">Email: okparking.net@gmail.com</div>
-              <div style="font-size:17px; font-weight:bold; margin-bottom:10px;">Thank you for choosing OK Parking.<BR>We look forward to welcoming you!</div>
+              <div style="font-size:14px; margin-bottom:15px;">Email: support@parking-system.local</div>
+              <div style="font-size:17px; font-weight:bold; margin-bottom:10px;">Thank you for choosing Parking System.<BR>We look forward to welcoming you!</div>
             </td>
           </tr>
 
@@ -2361,7 +2361,7 @@ staff immediately via LINE.</div>
 
         // Email subject
         // $subject = 'ยืนยันการจองที่จอดรถ - ' . $order_code . ' - ' . $site_name;
-        $subject = '[OK Parking] [Parking Service] Your Payment is Complete – Booking ID #' . $order_code;
+        $subject = '[Parking System] [Parking Service] Your Payment is Complete – Booking ID #' . $order_code;
 
         try {
             // Send email to customer
@@ -2594,7 +2594,7 @@ add_action('acf/init', function () {
                     'label' => 'Line OA ID',
                     'name' => 'line_oa_id',
                     'type' => 'text',
-                    'instructions' => 'ID สำหรับติดต่อ Line OA เช่น @okparking24',
+                    'instructions' => 'ID สำหรับติดต่อ Line OA เช่น @parkingsystem',
                     'required' => 0,
                     'conditional_logic' => 0,
                     'wrapper' => array(
@@ -2603,7 +2603,7 @@ add_action('acf/init', function () {
                         'id' => '',
                     ),
                     'default_value' => '',
-                    'placeholder' => '@okparking24',
+                    'placeholder' => '@parkingsystem',
                 ),
             ),
             'location' => array(
@@ -2735,7 +2735,7 @@ add_action('acf/init', function () {
                         'class' => '',
                         'id' => '',
                     ),
-                    'default_value' => "ในกรณี ผู้โดยสารเกิน 4 ท่าน ตั้งแต่ท่านที่ 5 ขออนุญาตคิดค่าบริการรับ-ส่ง เพิ่มท่านละ 100 บาท (เด็กไม่คิดเพิ่ม) โดยชำระกับแอดมิน Line: @okparking24",
+                    'default_value' => "ในกรณี ผู้โดยสารเกิน 4 ท่าน ตั้งแต่ท่านที่ 5 ขออนุญาตคิดค่าบริการรับ-ส่ง เพิ่มท่านละ 100 บาท (เด็กไม่คิดเพิ่ม) โดยชำระกับแอดมิน Line: @parkingsystem",
                     'placeholder' => '',
                 ),
             ),

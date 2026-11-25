@@ -860,10 +860,10 @@ function generate_parking_booking_email_template_v2($booking_body) {
             <td bgcolor="#29b2e2" align="center" style="padding:28px 24px; color:#ffffff;">
               <div style="font-size:18px; font-weight:bold; margin-bottom:10px;">Need Help? We’re Here for You!</div>
               <div style="font-size:14px; font-weight:bold; margin-bottom:10px;">If you have any questions or need assistance, please feel free to reach us</div>
-              <div style="font-size:14px; margin-bottom:15px;">LINE Official Account: @okparking24</div>
+              <div style="font-size:14px; margin-bottom:15px;">LINE Official Account: @parkingsystem</div>
               <div style="font-size:14px; margin-bottom:15px;">Phone: +6696-286-4050</div>
-              <div style="font-size:14px; margin-bottom:15px;">Email: okparking.net@gmail.com</div>
-              <div style="font-size:17px; font-weight:bold; margin-bottom:10px;">Thank you for choosing OK Parking.<BR>We look forward to welcoming you!</div>
+              <div style="font-size:14px; margin-bottom:15px;">Email: support@parking-system.local</div>
+              <div style="font-size:17px; font-weight:bold; margin-bottom:10px;">Thank you for choosing Parking System.<BR>We look forward to welcoming you!</div>
             </td>
           </tr>
 
@@ -947,12 +947,12 @@ function generate_carrent_booking_email_template_v2($booking_data) {
           <!-- Promo block -->
           <tr>
             <td bgcolor="#e67e22" align="center" style="padding:28px 24px; color:#ffffff;">
-              <div style="font-size:18px; font-weight:bold; margin-bottom:10px;">Contact OK Parking</div>
+              <div style="font-size:18px; font-weight:bold; margin-bottom:10px;">Contact Parking System</div>
               <div style="font-size:14px; font-weight:bold; margin-bottom:10px;">If you have any questions or need assistance, please feel free to reach us</div>
-              <div style="font-size:14px; margin-bottom:15px;">LINE Official Account: @okparking24</div>
+              <div style="font-size:14px; margin-bottom:15px;">LINE Official Account: @parkingsystem</div>
               <div style="font-size:14px; margin-bottom:15px;">Phone: +6696-286-4050</div>
-              <div style="font-size:14px; margin-bottom:15px;">Email: okparking.net@gmail.com</div>
-              <div style="font-size:17px; font-weight:bold; margin-bottom:10px;">Thank you for choosing OK Parking.<BR>We look forward to welcoming you!</div>
+              <div style="font-size:14px; margin-bottom:15px;">Email: support@parking-system.local</div>
+              <div style="font-size:17px; font-weight:bold; margin-bottom:10px;">Thank you for choosing Parking System.<BR>We look forward to welcoming you!</div>
             </td>
           </tr>
 
@@ -1022,7 +1022,7 @@ function parking_cancellation_notification($post_id) {
     
     $order_id = get_field('order_code', $post_id);
     $to = get_field('email_park', $post_id);
-    $subject = 'OK Parking - [Parking Reservation Service] Booking Canceled (Booking No. [' . $order_id . '])';
+    $subject = 'Parking System - [Parking Reservation Service] Booking Canceled (Booking No. [' . $order_id . '])';
     $headers = array('Content-Type: text/html; charset=UTF-8');
     
     $full_name = get_field('fullname_park', $post_id);
@@ -1050,7 +1050,7 @@ function parking_cancellation_notification($post_id) {
       <!-- Title -->
        <tr>
         <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-          <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+          <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
           <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Dear '.$full_name.',</div>
           <div style="font-size:13px;line-height:20px; color:#666;">
            Your reservation with a booking number [' . $order_id . '] has been successfully canceled. Please find the details below:
@@ -1159,7 +1159,7 @@ function carrent_cancellation_notification($post_id) {
 
     $personal_info = get_field('personal_information', $post_id);
     $to = $personal_info['email'];
-    $subject = 'OK Parking - [Private Car Service] Booking Cancelled (Booking No. [' . $order_code . '])';
+    $subject = 'Parking System - [Private Car Service] Booking Cancelled (Booking No. [' . $order_code . '])';
     $headers = array('Content-Type: text/html; charset=UTF-8');
     
     $full_name = get_field('fullname', $post_id);
@@ -1190,7 +1190,7 @@ function carrent_cancellation_notification($post_id) {
       <!-- Title -->
        <tr>
         <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-          <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+          <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
           <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Dear '.$full_name.',</div>
           <div style="font-size:13px;line-height:20px; color:#666;">
           We regret to inform you that your booking number [' . $order_code . '] has been successfully cancelled. Please see the details below:
@@ -1327,7 +1327,7 @@ function parking_reminder_cron() {
         if ($current_time <= $reminder_time && $current_time < $start_datetime) {
             $order_id = get_field('order_code', $booking_id);
             $to = get_field('email_park', $booking_id);
-            $subject = 'OK Parking - [Parking Service] Reminder: Your booking starts soon (Booking No. [' . $order_id . '])';
+            $subject = 'Parking System - [Parking Service] Reminder: Your booking starts soon (Booking No. [' . $order_id . '])';
             $headers = array('Content-Type: text/html; charset=UTF-8');
             
             $full_name = get_field('fullname_park', $booking_id);
@@ -1344,7 +1344,7 @@ function parking_reminder_cron() {
               <!-- Title -->
                <tr>
                 <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-                  <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+                  <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
                   <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Dear '.$full_name.',</div>
                   <div style="font-size:13px;line-height:20px; color:#666;">
                   This is a reminder that your parking booking is starting soon.
@@ -1446,7 +1446,7 @@ function parking_checkout_reminder_cron() {
         if ($current_time >= $reminder_time && $current_time < $end_datetime) {
             $order_id = get_field('order_code', $booking_id);
             $to = get_field('email_park', $booking_id);
-            $subject = 'OK Parking - [Parking Service] Reminder: Your booking end soon (Booking No. [' . $order_id . '])';
+            $subject = 'Parking System - [Parking Service] Reminder: Your booking end soon (Booking No. [' . $order_id . '])';
             $headers = array('Content-Type: text/html; charset=UTF-8');
             
             $full_name = get_field('fullname_park', $booking_id);
@@ -1463,7 +1463,7 @@ function parking_checkout_reminder_cron() {
               <!-- Title -->
                <tr>
                 <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-                  <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+                  <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
                   <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Dear '.$full_name.',</div>
                   <div style="font-size:13px;line-height:20px; color:#666;">
                     This is a reminder that your parking booking will end soon.
@@ -1558,7 +1558,7 @@ function parking_overtime_notification_cron() {
         if ($current_time > $overtime_threshold) {
             $order_id = get_field('order_code', $booking_id);
             $to = get_field('email_park', $booking_id);
-            $subject = 'OK Parking - [Parking Service] Overtime Notification (Booking No. [' . $order_id . '])';
+            $subject = 'Parking System - [Parking Service] Overtime Notification (Booking No. [' . $order_id . '])';
             $headers = array('Content-Type: text/html; charset=UTF-8');
             
             $full_name = get_field('fullname_park', $booking_id);
@@ -1581,7 +1581,7 @@ function parking_overtime_notification_cron() {
               <!-- Title -->
                <tr>
                 <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-                  <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+                  <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
                   <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Dear '.$full_name.',</div>
                   <div style="font-size:13px;line-height:20px; color:#666;">
                     Our system has detected that your booking has already passed the scheduled end time, but you have not yet completed the Check-out process. This means your vehicle has overstayed the reserved period.
@@ -1708,7 +1708,7 @@ function parking_checkin_overdue_notification_cron() {
               <!-- Title -->
                <tr>
                 <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-                  <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+                  <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
                   <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Admin Alert</div>
                   <div style="font-size:13px;line-height:20px; color:#666;">
                   A customer has not checked in within 1 hour of their booking start time. This requires immediate attention.
@@ -1853,7 +1853,7 @@ function carrent_12hour_reminder_cron() {
                         } else {
                             $order_id = $order_code; // fallback if no parentheses found
                         }
-                        $subject = 'OK Parking - [Private Car Service] 12-Hour Appointment Reminder (Booking No. [' . $order_id . '])';  
+                        $subject = 'Parking System - [Private Car Service] 12-Hour Appointment Reminder (Booking No. [' . $order_id . '])';  
 
                         $headers = array('Content-Type: text/html; charset=UTF-8');
                         
@@ -1874,10 +1874,10 @@ function carrent_12hour_reminder_cron() {
                       <!-- Title -->
                           <tr>
                             <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-                              <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+                              <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
                               <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Dear '.$full_name.',</div>
                               <div style="font-size:13px;line-height:20px; color:#666;">
-                                This is a reminder for your upcoming Private Car Service with OK Parking scheduled in the next 12 hours. Please see the details below:
+                                This is a reminder for your upcoming Private Car Service with Parking System scheduled in the next 12 hours. Please see the details below:
                               </div>
                             </td>
                           </tr>
@@ -1998,7 +1998,7 @@ function carrent_12hour_return_reminder_cron() {
                         } else {
                             $order_id = $order_code; // fallback if no parentheses found
                         }
-                        $subject = '  OK Parking - [Private Car Service] 12-Hour Return Trip Reminders - Booking No. [' . $order_id . ']';
+                        $subject = '  Parking System - [Private Car Service] 12-Hour Return Trip Reminders - Booking No. [' . $order_id . ']';
                         $headers = array('Content-Type: text/html; charset=UTF-8');
 
                         $full_name = get_field('fullname', $booking_id);
@@ -2017,7 +2017,7 @@ function carrent_12hour_return_reminder_cron() {
                           <!-- Title -->
                            <tr>
                             <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-                              <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+                              <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
                               <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Car Rental Return Reminder</div>
                               <div style="font-size:13px;line-height:20px; color:#666;">
                               Your car rental return is scheduled in 12 hours. Please ensure you return the vehicle on time.

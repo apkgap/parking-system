@@ -729,10 +729,10 @@ function generate_carrent_booking_email_template($booking_data, $order_code, $po
           <!-- Greeting -->
           <tr>
             <td align="left" class="px-24 py-32" style="padding:28px 24px;">
-              <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+              <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
               <div style="font-size:14px;line-height:20px; font-weight:bold; color:#333;">Dear '.$full_name.',</div>
               <div style="font-size:13px; color:#666;">
-              OK Parking is pleased to confirm that your payment for booking number '.$order_code.'<BR>has been successfully verified, and your booking is now complete.
+              Parking System is pleased to confirm that your payment for booking number '.$order_code.'<BR>has been successfully verified, and your booking is now complete.
               </div>
             </td>
           </tr>
@@ -867,12 +867,12 @@ function generate_carrent_booking_email_template($booking_data, $order_code, $po
           <!-- Promo block -->
           <tr>
             <td bgcolor="#e67e22" align="center" style="padding:28px 24px; color:#ffffff;">
-              <div style="font-size:18px; font-weight:bold; margin-bottom:10px;">Contact OK Parking</div>
+              <div style="font-size:18px; font-weight:bold; margin-bottom:10px;">Contact Parking System</div>
               <div style="font-size:14px; font-weight:bold; margin-bottom:10px;">If you have any questions or need assistance, please feel free to reach us</div>
-              <div style="font-size:14px; margin-bottom:15px;">LINE Official Account: @okparking24</div>
+              <div style="font-size:14px; margin-bottom:15px;">LINE Official Account: @parkingsystem</div>
               <div style="font-size:14px; margin-bottom:15px;">Phone: +6696-286-4050</div>
-              <div style="font-size:14px; margin-bottom:15px;">Email: okparking.net@gmail.com</div>
-              <div style="font-size:17px; font-weight:bold; margin-bottom:10px;">Thank you for choosing OK Parking.<BR>We look forward to welcoming you!</div>
+              <div style="font-size:14px; margin-bottom:15px;">Email: support@parking-system.local</div>
+              <div style="font-size:17px; font-weight:bold; margin-bottom:10px;">Thank you for choosing Parking System.<BR>We look forward to welcoming you!</div>
             </td>
           </tr>
 
@@ -902,7 +902,7 @@ function generate_carrent_booking_email_template($booking_data, $order_code, $po
         );
         
         // Email subject
-        $subject = 'OK Parking - [Private Car Service] Booking Confirmed (Booking No. ' . $order_code . ')';
+        $subject = 'Parking System - [Private Car Service] Booking Confirmed (Booking No. ' . $order_code . ')';
 
         
         try {
@@ -1437,7 +1437,7 @@ function generate_car_rental_email_template($fields, $booking_ref, $post_id) {
                 <tr>
                   <td class="text-center-sm" style="font-weight:bold; font-size:20px;">' . $site_name . '</td>
                   <td align="right" class="text-center-sm">
-                    <a href="' . $site_url . '" style="color:#ffffff; text-decoration:none; font-size:14px;">OK Parking ▸</a>
+                    <a href="' . $site_url . '" style="color:#ffffff; text-decoration:none; font-size:14px;">Parking System ▸</a>
                   </td>
                 </tr>
               </table>
@@ -1448,7 +1448,7 @@ function generate_car_rental_email_template($fields, $booking_ref, $post_id) {
           <!-- Title -->
           <tr>
             <td align="center" class="px-24 py-32" style="padding:28px 24px;">
-              <img src="' . get_stylesheet_directory_uri() . '/customize/img/logo-okpark.jpg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
+              <img src="' . get_stylesheet_directory_uri() . '/customize/img/brand-logo.svg" width="60" height="60" alt="Success" style="display:block; margin:0 auto 12px; border-radius:32px;">
               <div style="font-size:22px; font-weight:bold; color:#333;">ขอบคุณสำหรับคำสั่งซื้อของคุณ!</div>
               <div style="font-size:13px; color:#666;">เราได้รับคำสั่งซื้อแล้วและกำลังจัดส่งให้คุณ</div>
             </td>

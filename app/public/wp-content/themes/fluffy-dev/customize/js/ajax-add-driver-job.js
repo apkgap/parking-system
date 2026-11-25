@@ -378,7 +378,7 @@ jQuery(document).ready(function($) {
                     
                     // Redirect to dashboard after a short delay and activate tab4
                     setTimeout(function() {
-                        window.location.href = 'https://www.okparking.net/dashboard/';
+                        window.location.href = window.location.origin + '/dashboard/';
                         // Activate the sidebar tab4
                         $('.sidebar').find('[data-nav="tab4"]').addClass('active');
                     }, 1500);

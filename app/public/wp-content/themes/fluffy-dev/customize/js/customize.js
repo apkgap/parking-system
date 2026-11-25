@@ -11,7 +11,7 @@ jQuery(document).ready(function($) {
 
     const buttons = document.querySelectorAll('.booking-button');
     const loadingBlock = document.querySelector('#box-loading');
-    const baseUrl = window.location.origin; // e.g., https://www.okparking.net
+    const baseUrl = window.location.origin; // e.g., https://parking-system.local
 
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {

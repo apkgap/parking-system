@@ -40,7 +40,7 @@ function fluffy_customize_register( $wp_customize ) {
 
 	// Passenger extra fee notice setting
 	$wp_customize->add_setting( 'passenger_extra_fee_notice', array(
-		'default'           => "ในกรณี ผู้โดยสารเกิน 4 ท่าน ตั้งแต่ท่านที่ 5 ขออนุญาตคิดค่าบริการรับ-ส่ง เพิ่มท่านละ 100 บาท (เด็กไม่คิดเพิ่ม) โดยชำระกับแอดมิน Line: @okparking24",
+		'default'           => "ในกรณี ผู้โดยสารเกิน 4 ท่าน ตั้งแต่ท่านที่ 5 ขออนุญาตคิดค่าบริการรับ-ส่ง เพิ่มท่านละ 100 บาท (เด็กไม่คิดเพิ่ม) โดยชำระกับแอดมิน Line: @parkingsystem",
 		'sanitize_callback' => 'wp_kses_post',
 	) );
 

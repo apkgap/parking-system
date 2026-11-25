@@ -128,7 +128,7 @@ jQuery(document).ready(function ($) {
       }
 
       // Build the API URL with location parameter if available
-      let apiUrl = "https://www.okparking.net/wp-json/custom/v1/parking_space";
+      let apiUrl = window.location.origin + "/wp-json/custom/v1/parking_space";
       if (locationId) {
         apiUrl += `?locate_id=${locationId}`;
       }
@@ -148,7 +148,7 @@ jQuery(document).ready(function ($) {
   async function fetchParkingBookingData() {
     try {
       const response = await fetch(
-        "https://www.okparking.net/wp-json/custom/v1/parking_booking",
+        window.location.origin + "/wp-json/custom/v1/parking_booking",
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
