@@ -14,7 +14,7 @@ function getSpaceColorClass(space, isOccupied, isSelected, viewMode) {
 		return 'bg-red-500 text-white border border-red-600 cursor-not-allowed opacity-90';
 	}
 	if (isSelected) {
-		return 'bg-[#4169F7] text-white border border-[#3154D9] ring-2 ring-[#4169F7]/30 shadow-sm';
+		return 'bg-[var(--fluffy-primary)] text-white border border-[var(--fluffy-primary-hover)] ring-2 ring-[var(--fluffy-primary)]/30 shadow-sm';
 	}
 	if (viewMode === 'distance') {
 		const y = Number(space.position?.y || 0);
@@ -111,6 +111,7 @@ export default function CarparkBooking() {
 		lineid: user.lineId || '',
 	});
 
+	const [currentStep, setCurrentStep] = useState(1);
 	const [checking, setChecking] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 	const [modal, setModal] = useState({ open: false, type: 'success', title: '', message: '' });
@@ -228,7 +229,7 @@ export default function CarparkBooking() {
 				{ color: 'bg-blue-500', text: t('ใกล้ทางเข้า', 'Near entrance') },
 				{ color: 'bg-amber-500', text: t('ระยะปานกลาง', 'Medium distance') },
 				{ color: 'bg-orange-500', text: t('ไกลจากทางเข้า', 'Far from entrance') },
-				{ color: 'bg-[#4169F7]', text: t('ช่องจอดที่เลือก', 'Selected') },
+				{ color: 'bg-[var(--fluffy-primary)]', text: t('ช่องจอดที่เลือก', 'Selected') },
 				{ color: 'bg-red-500', text: t('ใช้งานแล้ว', 'Occupied') },
 				{ color: 'bg-slate-100 border border-dashed border-slate-300', text: t('ทางเดิน', 'Walkway') },
 			];
@@ -238,7 +239,7 @@ export default function CarparkBooking() {
 				{ color: 'bg-purple-500', text: t('โซน A-B', 'Zone A-B') },
 				{ color: 'bg-indigo-500', text: t('โซน C-D', 'Zone C-D') },
 				{ color: 'bg-teal-500', text: t('โซนอื่นๆ', 'Other Zones') },
-				{ color: 'bg-[#4169F7]', text: t('ช่องจอดที่เลือก', 'Selected') },
+				{ color: 'bg-[var(--fluffy-primary)]', text: t('ช่องจอดที่เลือก', 'Selected') },
 				{ color: 'bg-red-500', text: t('ใช้งานแล้ว', 'Occupied') },
 				{ color: 'bg-slate-100 border border-dashed border-slate-300', text: t('ทางเดิน', 'Walkway') },
 			];
@@ -246,7 +247,7 @@ export default function CarparkBooking() {
 		return [
 			{ color: 'bg-emerald-500', text: t('ช่องจอดว่าง', 'Available') },
 			{ color: 'bg-red-500', text: t('ใช้งานแล้ว', 'Occupied') },
-			{ color: 'bg-[#4169F7]', text: t('ช่องจอดที่เลือก', 'Selected') },
+			{ color: 'bg-[var(--fluffy-primary)]', text: t('ช่องจอดที่เลือก', 'Selected') },
 			{ color: 'bg-slate-100 border border-dashed border-slate-300', text: t('ทางเดิน', 'Walkway') },
 		];
 	}, [viewMode]);
@@ -306,7 +307,7 @@ export default function CarparkBooking() {
 			setConditionError(errObj);
 			setHasChecked(false);
 			setSelectedSpaces([]);
-			return;
+			return false;
 		}
 		setConditionError(null);
 		setChecking(true);
@@ -319,9 +320,11 @@ export default function CarparkBooking() {
 			setOccupiedIds((occupied || []).map((item) => Number(item.id)));
 			setSelectedSpaces([]);
 			setHasChecked(true);
+			return true;
 		} catch (err) {
 			setConditionError({ type: 'blackout', message: err.message });
 			setHasChecked(false);
+			return false;
 		} finally {
 			setChecking(false);
 		}
@@ -445,6 +448,61 @@ export default function CarparkBooking() {
 
 	const finalTotal = Math.max(0, pricing.total_price - discount);
 
+	const wizardSteps = [
+		{ id: 1, label: t('วันเวลาและรถ', 'Schedule & Vehicles') },
+		{ id: 2, label: t('ผังช่องจอด', 'Parking Map') },
+		{ id: 3, label: t('บริการเสริมและผู้จอง', 'Add-ons & Contact') },
+		{ id: 4, label: t('ตรวจสอบและยืนยัน', 'Review & Confirm') },
+	];
+
+	const handleNextStep = async () => {
+		if (currentStep === 1) {
+			const errObj = validateScheduleConditions();
+			if (errObj) {
+				setConditionError(errObj);
+				setModal({ open: true, type: 'error', title: t('ไม่ตรงเงื่อนไขการจอง', 'Booking Condition'), message: errObj.message });
+				return;
+			}
+			if (totalVehicles <= 0) {
+				setModal({ open: true, type: 'error', title: t('ระบุจำนวนรถ', 'Specify Vehicles'), message: t('กรุณาระบุจำนวนรถอย่างน้อย 1 คัน', 'Please select at least 1 vehicle.') });
+				return;
+			}
+			const ok = await handleCheckAvailability();
+			if (ok) {
+				setCurrentStep(2);
+			}
+			return;
+		}
+		if (currentStep === 2) {
+			if (selectedSpaces.length !== totalVehicles) {
+				setModal({
+					open: true,
+					type: 'error',
+					title: t('กรุณาเลือกช่องจอดให้ครบ', 'Select All Spaces'),
+					message: t(
+						`กรุณาเลือกช่องจอดให้ครบ ${totalVehicles} ช่อง (เลือกแล้ว ${selectedSpaces.length} ช่อง)`,
+						`Please select ${totalVehicles} parking space(s) (${selectedSpaces.length} selected).`
+					),
+				});
+				return;
+			}
+			setCurrentStep(3);
+			return;
+		}
+		if (currentStep === 3) {
+			if (!profile.fullname.trim() || !profile.email.trim() || !profile.phone.trim()) {
+				setModal({
+					open: true,
+					type: 'error',
+					title: t('กรอกข้อมูลผู้จองไม่ครบ', 'Missing Contact Details'),
+					message: t('กรุณากรอกชื่อ-นามสกุล อีเมล และเบอร์โทรศัพท์ให้ครบถ้วน', 'Please fill in full name, email, and phone number.'),
+				});
+				return;
+			}
+			setCurrentStep(4);
+		}
+	};
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const errObj = validateScheduleConditions();
@@ -527,17 +585,43 @@ export default function CarparkBooking() {
 							{t('เลือกวันเวลา ประเภทรถ ผังช่องจอด และบริการเสริมครบในหน้าเดียว', 'Select schedule, vehicle types, parking map slots, and add-on services.')}
 						</p>
 					</div>
-					<ol id="fluffy-carpark-steps" className="fluffy-carpark__steps m-0 flex list-none items-center gap-4 p-0 text-xs font-medium text-[#64748B]">
-						<li className="fluffy-carpark__step fluffy-carpark__step--active font-semibold text-[#4169F7]">1. {t('การจอง', 'Booking')}</li>
-						<li className="fluffy-carpark__step">2. {t('ชำระเงิน', 'Payment')}</li>
-						<li className="fluffy-carpark__step">3. {t('ยืนยันการจอง', 'Confirmed')}</li>
-					</ol>
 				</div>
 
 				<form id="fluffy-carpark-form" className="fluffy-carpark__form grid gap-6 lg:grid-cols-12" onSubmit={handleSubmit}>
 					<div id="fluffy-carpark-main" className="fluffy-carpark__main space-y-6 lg:col-span-8">
-						{/* Section 1: Date, Time & Location */}
-						<section id="fluffy-carpark-schedule" className="fluffy-carpark__section fluffy-saas-card">
+						{/* Step Wizard Navigation */}
+						<nav id="fluffy-carpark-wizard-nav" className="fluffy-carpark__wizard-nav fluffy-wizard-nav" aria-label="Booking steps">
+							{wizardSteps.map((step) => {
+								const isActive = currentStep === step.id;
+								const isCompleted = currentStep > step.id;
+								return (
+									<button
+										id={`fluffy-wizard-step-${step.id}`}
+										className={`fluffy-carpark__wizard-btn fluffy-wizard-btn ${
+											isActive ? 'is-active' : isCompleted ? 'is-completed' : ''
+										}`}
+										type="button"
+										key={step.id}
+										disabled={step.id > currentStep}
+										onClick={() => {
+											if (step.id < currentStep) {
+												setCurrentStep(step.id);
+											}
+										}}
+									>
+										<span className="fluffy-wizard-btn__num">
+											{isCompleted ? '✓' : step.id}
+										</span>
+										<span className="truncate">{step.label}</span>
+									</button>
+								);
+							})}
+						</nav>
+
+						{currentStep === 1 && (
+							<>
+								{/* Section 1: Date, Time & Location */}
+								<section id="fluffy-carpark-schedule" className="fluffy-carpark__section fluffy-saas-card">
 							<h2 className="mb-4 text-base font-semibold text-[#0F172A]">{t('1. วันเวลาและสถานที่', '1. Schedule & Location')}</h2>
 							<div className="grid gap-4 sm:grid-cols-2">
 								<div>
@@ -574,17 +658,12 @@ export default function CarparkBooking() {
 								</div>
 							</div>
 
-							<div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
-								<div className="flex-1">
-									<label htmlFor="fluffy-location" className="fluffy-saas-label">{t('สถานที่', 'Airport Location')} *</label>
-									<select id="fluffy-location" className="fluffy-saas-select" value={location} onChange={(e) => setLocation(e.target.value)}>
-										<option value="SuvarnabhumiAirport">{t('สนามบินสุวรรณภูมิ', 'Suvarnabhumi Airport')}</option>
-										<option value="DonMueangAirport">{t('สนามบินดอนเมือง', 'Don Mueang Airport')}</option>
-									</select>
-								</div>
-								<button type="button" onClick={handleCheckAvailability} disabled={checking} className="fluffy-saas-btn fluffy-saas-btn-primary">
-									{checking ? t('กำลังตรวจสอบ...', 'Checking...') : t('ตรวจสอบช่องว่าง', 'Check Availability')}
-								</button>
+							<div className="mt-4">
+								<label htmlFor="fluffy-location" className="fluffy-saas-label">{t('สถานที่', 'Airport Location')} *</label>
+								<select id="fluffy-location" className="fluffy-saas-select" value={location} onChange={(e) => setLocation(e.target.value)}>
+									<option value="SuvarnabhumiAirport">{t('สนามบินสุวรรณภูมิ', 'Suvarnabhumi Airport')}</option>
+									<option value="DonMueangAirport">{t('สนามบินดอนเมือง', 'Don Mueang Airport')}</option>
+								</select>
 							</div>
 
 							{conditionError && (
@@ -679,9 +758,13 @@ export default function CarparkBooking() {
 								))}
 							</div>
 						</section>
+							</>
+						)}
 
-						{/* Section 3: Original 2D Parking Grid Map */}
-						<section id="fluffy-parking-map-card" className="fluffy-saas-card">
+						{currentStep === 2 && (
+							<>
+								{/* Section 3: Original 2D Parking Grid Map */}
+								<section id="fluffy-parking-map-card" className="fluffy-saas-card">
 							<div className="mb-4 flex flex-wrap items-center justify-between gap-3">
 								<div>
 									<h2 className="text-base font-semibold text-[#0F172A]">{t('3. ผังเลือกช่องจอดรถ', '3. Parking Space Map')}</h2>
@@ -700,7 +783,7 @@ export default function CarparkBooking() {
 											key={mode.key}
 											onClick={() => setViewMode(mode.key)}
 											className={`rounded-md px-3 py-1.5 font-semibold transition ${
-												viewMode === mode.key ? 'bg-[#4169F7] text-white' : 'text-[#64748B] hover:text-[#0F172A]'
+												viewMode === mode.key ? 'bg-[var(--fluffy-primary)] text-white' : 'text-[#64748B] hover:text-[#0F172A]'
 											}`}
 										>
 											{mode.label}
@@ -852,9 +935,13 @@ export default function CarparkBooking() {
 								</div>
 							)}
 						</section>
+							</>
+						)}
 
-						{/* Section 4: Original Add-on Services (Pickup & Valet) */}
-						<section id="fluffy-carpark-addons" className="fluffy-carpark__section fluffy-saas-card space-y-4">
+						{currentStep === 3 && (
+							<>
+								{/* Section 4: Original Add-on Services (Pickup & Valet) */}
+								<section id="fluffy-carpark-addons" className="fluffy-carpark__section fluffy-saas-card space-y-4">
 							<h2 className="text-base font-semibold text-[#0F172A]">{t('4. บริการเสริม (ไม่บังคับ)', '4. Add-on Services (Optional)')}</h2>
 
 							<label className="flex cursor-pointer items-center gap-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3.5">
@@ -930,6 +1017,80 @@ export default function CarparkBooking() {
 								</div>
 							</div>
 						</section>
+							</>
+						)}
+
+						{currentStep === 4 && (
+							<section id="fluffy-carpark-review" className="fluffy-carpark__section fluffy-saas-card space-y-5">
+								<h2 className="m-0 text-base font-semibold text-[#0F172A]">{t('ตรวจสอบข้อมูลการจอง', 'Review Reservation Details')}</h2>
+								<div className="grid gap-4 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-sm sm:grid-cols-2">
+									<div>
+										<div className="text-xs text-[#64748B]">{t('สนามบิน', 'Location')}</div>
+										<div className="mt-0.5 font-semibold text-[#0F172A]">
+											{location === 'DonMueangAirport' ? t('สนามบินดอนเมือง', 'Don Mueang Airport') : t('สนามบินสุวรรณภูมิ', 'Suvarnabhumi Airport')}
+										</div>
+									</div>
+									<div>
+										<div className="text-xs text-[#64748B]">{t('ช่วงเวลาจอด', 'Parking Schedule')}</div>
+										<div className="mt-0.5 font-semibold text-[#0F172A]">{startDate} {startTime} → {endDate} {endTime}</div>
+									</div>
+									<div>
+										<div className="text-xs text-[#64748B]">{t('ช่องจอดและทะเบียนรถ', 'Slots & Plates')}</div>
+										<div className="mt-0.5 font-medium text-[#0F172A]">
+											{selectedSpaces.map((s) => `${s.title}${s.licensePlate ? ` (${s.licensePlate})` : ''}`).join(', ')}
+										</div>
+									</div>
+									<div>
+										<div className="text-xs text-[#64748B]">{t('บริการเสริม', 'Add-ons')}</div>
+										<div className="mt-0.5 font-medium text-[#0F172A]">
+											{servicePickup || serviceValet
+												? [servicePickup ? t('รถรับ-ส่งสนามบิน', 'Shuttle') : '', serviceValet ? 'Valet' : ''].filter(Boolean).join(', ')
+												: t('ไม่มี', 'None')}
+										</div>
+									</div>
+									<div>
+										<div className="text-xs text-[#64748B]">{t('ผู้จอง', 'Customer')}</div>
+										<div className="mt-0.5 font-medium text-[#0F172A]">{profile.fullname} · {profile.phone}</div>
+									</div>
+									<div>
+										<div className="text-xs text-[#64748B]">Email / LINE</div>
+										<div className="mt-0.5 font-medium text-[#0F172A]">{profile.email} {profile.lineid ? `· ${profile.lineid}` : ''}</div>
+									</div>
+								</div>
+							</section>
+						)}
+
+						{/* Wizard Footer Navigation */}
+						<div id="fluffy-carpark-wizard-actions" className="fluffy-carpark__wizard-actions flex items-center justify-between gap-3 pt-1">
+							{currentStep > 1 ? (
+								<button
+									id="fluffy-wizard-prev"
+									className="fluffy-saas-btn fluffy-saas-btn-secondary"
+									type="button"
+									onClick={() => setCurrentStep((s) => Math.max(1, s - 1))}
+								>
+									← {t('ย้อนกลับ', 'Back')}
+								</button>
+							) : (
+								<span />
+							)}
+
+							{currentStep < 4 ? (
+								<button
+									id="fluffy-wizard-next"
+									className="fluffy-saas-btn fluffy-saas-btn-primary"
+									type="button"
+									disabled={checking}
+									onClick={handleNextStep}
+								>
+									{checking ? t('กำลังค้นหาช่องว่าง...', 'Checking availability...') : `${t('ถัดไป', 'Continue')} →`}
+								</button>
+							) : (
+								<button id="fluffy-wizard-submit" type="submit" disabled={submitting} className="fluffy-saas-btn fluffy-saas-btn-primary">
+									{submitting ? t('กำลังดำเนินการ...', 'Submitting...') : t('ยืนยันการจอง', 'Confirm Booking')}
+								</button>
+							)}
+						</div>
 					</div>
 
 					<aside id="fluffy-carpark-sidebar" className="fluffy-carpark__sidebar lg:col-span-4">
@@ -952,7 +1113,7 @@ export default function CarparkBooking() {
 								)}
 								<div className="flex justify-between border-t border-[#E2E8F0] pt-3 text-base font-bold text-[#0F172A]">
 									<span>{t('ยอดสุทธิ', 'Total')}</span>
-									<span className="text-[#4169F7]">{finalTotal.toLocaleString()} {t('บาท', 'THB')}</span>
+									<span className="text-[var(--fluffy-primary)]">{finalTotal.toLocaleString()} {t('บาท', 'THB')}</span>
 								</div>
 							</div>
 
@@ -971,9 +1132,15 @@ export default function CarparkBooking() {
 							</div>
 							{couponStatus && <p className="mt-2 text-xs text-[#64748B]">{couponStatus}</p>}
 
-							<button type="submit" disabled={submitting} className="fluffy-saas-btn fluffy-saas-btn-primary mt-6 w-full py-3">
-								{submitting ? t('กำลังดำเนินการ...', 'Submitting...') : t('ดำเนินการชำระเงิน', 'Proceed to Payment')}
-							</button>
+							{currentStep < 4 ? (
+								<button type="button" onClick={handleNextStep} disabled={checking} className="fluffy-saas-btn fluffy-saas-btn-primary mt-6 w-full py-3">
+									{checking ? t('กำลังค้นหาช่องว่าง...', 'Checking...') : `${t('ขั้นตอนถัดไป', 'Next Step')} →`}
+								</button>
+							) : (
+								<button type="submit" disabled={submitting} className="fluffy-saas-btn fluffy-saas-btn-primary mt-6 w-full py-3">
+									{submitting ? t('กำลังดำเนินการ...', 'Submitting...') : t('ยืนยันการจอง', 'Confirm Booking')}
+								</button>
+							)}
 						</div>
 					</aside>
 				</form>

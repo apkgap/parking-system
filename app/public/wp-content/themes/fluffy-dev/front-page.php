@@ -28,18 +28,12 @@ get_header();
 			<p class="mt-1 text-sm text-[#64748B]"><?php yp_text( 'เข้าสู่ระบบเพื่อจัดการการจองและแดชบอร์ด', 'Please sign in to your account' ); ?></p>
 		</div>
 
-		<?php if ( shortcode_exists( 'nextend_social_login' ) ) : ?>
-			<div class="wpt-social-login mb-6">
-				<div class="sh">
-					<?php echo do_shortcode( '[nextend_social_login style="icon" redirect="' . esc_url( home_url( '/dashboard/' ) ) . '"]' ); ?>
-				</div>
-				<div class="divider">
-					<span><?php yp_text( 'หรือเข้าสู่ระบบด้วย', 'Or Login With' ); ?></span>
-				</div>
-			</div>
-		<?php endif; ?>
-
 		<div id="fluffy-auth-root" class="fluffy-react-root" data-mode="login"></div>
+
+		<div id="fluffy-demo-credentials" class="fluffy-login__demo mt-5 flex items-center justify-between border-t border-[#E2E8F0] pt-4 text-xs text-[#64748B]">
+			<span><?php yp_text( 'ทดลองใช้', 'Demo' ); ?></span>
+			<span class="font-mono text-[#0F172A]">demo_staff / Demo@2026!</span>
+		</div>
 	</div>
 </main>
 

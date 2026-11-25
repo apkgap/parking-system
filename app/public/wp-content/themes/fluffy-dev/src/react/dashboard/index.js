@@ -126,7 +126,7 @@ function FrontendDashboardApp() {
 								<button
 									id={`fluffy-dash-tab-${tab.id}`}
 									className={`rounded-lg px-3.5 py-2 text-sm font-semibold transition ${
-										activeTab === tab.id ? 'bg-[#4169F7] text-white' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
+										activeTab === tab.id ? 'bg-[var(--fluffy-primary)] text-white' : 'text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#0F172A]'
 									}`}
 									type="button"
 									key={tab.id}
@@ -176,7 +176,7 @@ function FrontendDashboardApp() {
 													: row.phone || (typeof row.location_park === 'object' ? row.location_park?.name : row.location_park) || '-'}
 											</td>
 											<td className="px-4 py-3">
-												<span className="fluffy-saas-pill bg-[#EEF2FF] text-[#4169F7]">
+												<span className="fluffy-saas-pill bg-[var(--fluffy-primary-soft)] text-[var(--fluffy-primary)]">
 													{row.tracking_check_status || row.status_job || row.status || 'pending'}
 												</span>
 											</td>

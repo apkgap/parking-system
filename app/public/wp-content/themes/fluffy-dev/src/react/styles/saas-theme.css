@@ -1,9 +1,9 @@
 :root {
 	--fluffy-bg: #F8FAFC;
 	--fluffy-card: #FFFFFF;
-	--fluffy-primary: #4169F7;
-	--fluffy-primary-hover: #3154D9;
-	--fluffy-primary-soft: #EEF2FF;
+	--fluffy-primary: #29B2E2;
+	--fluffy-primary-hover: #1E9BC7;
+	--fluffy-primary-soft: #E6F7FD;
 	--fluffy-text: #0F172A;
 	--fluffy-text-secondary: #64748B;
 	--fluffy-border: #E2E8F0;
@@ -247,18 +247,18 @@
 }
 
 .fluffy-datepicker__popover .rdp-root {
-	--rdp-accent-color: #4169F7;
-	--rdp-accent-background-color: #EEF2FF;
+	--rdp-accent-color: var(--fluffy-primary);
+	--rdp-accent-background-color: var(--fluffy-primary-soft);
 	--rdp-day_button-border-radius: 8px;
 	--rdp-day-height: 36px;
 	--rdp-day-width: 36px;
-	--rdp-today-color: #4169F7;
+	--rdp-today-color: var(--fluffy-primary);
 	font-family: 'Inter', 'Noto Sans Thai', sans-serif;
 	font-size: 13px;
 }
 
 .fluffy-datepicker__popover .rdp-selected .rdp-day_button {
-	background-color: #4169F7;
+	background-color: var(--fluffy-primary);
 	color: #FFFFFF;
 	font-weight: 600;
 }
@@ -332,4 +332,76 @@
 	background: var(--fluffy-primary);
 	color: #FFFFFF;
 	font-weight: 600;
+}
+
+/* 4-Step Wizard Navigation */
+.fluffy-wizard-nav {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+	background: #FFFFFF;
+	border: 1px solid var(--fluffy-border);
+	border-radius: var(--fluffy-radius);
+	padding: 8px;
+}
+
+@media (min-width: 640px) {
+	.fluffy-wizard-nav {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+.fluffy-wizard-btn {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	border: 1px solid transparent;
+	border-radius: var(--fluffy-radius-sm);
+	background: transparent;
+	padding: 9px 12px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--fluffy-text-secondary);
+	text-align: left;
+	cursor: pointer;
+	transition: background-color 150ms ease, color 150ms ease;
+}
+
+.fluffy-wizard-btn:disabled {
+	cursor: default;
+}
+
+.fluffy-wizard-btn.is-active {
+	background: var(--fluffy-primary);
+	color: #FFFFFF;
+}
+
+.fluffy-wizard-btn.is-completed {
+	background: var(--fluffy-primary-soft);
+	color: var(--fluffy-primary);
+}
+
+.fluffy-wizard-btn__num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	flex-shrink: 0;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 700;
+	background: #E2E8F0;
+	color: var(--fluffy-text-secondary);
+}
+
+.fluffy-wizard-btn.is-active .fluffy-wizard-btn__num {
+	background: rgba(255, 255, 255, 0.22);
+	color: #FFFFFF;
+}
+
+.fluffy-wizard-btn.is-completed .fluffy-wizard-btn__num {
+	background: var(--fluffy-primary);
+	color: #FFFFFF;
 }

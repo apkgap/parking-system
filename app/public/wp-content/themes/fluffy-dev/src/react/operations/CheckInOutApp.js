@@ -159,7 +159,7 @@ export default function CheckInOutApp({ mode = 'checkin' }) {
 								</h2>
 								<p className="m-0 mt-1 text-sm text-[#64748B]">{locationName}</p>
 							</div>
-							<span className="fluffy-saas-pill bg-[#EEF2FF] text-[#4169F7]">
+							<span className="fluffy-saas-pill bg-[var(--fluffy-primary-soft)] text-[var(--fluffy-primary)]">
 								{booking.tracking_check_status || booking.status || 'pending'}
 							</span>
 						</div>

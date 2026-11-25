@@ -9,6 +9,36 @@ if ( ! defined( 'FLUFFY_DEMO_SKIP_PAYMENT' ) ) {
 	define( 'FLUFFY_DEMO_SKIP_PAYMENT', true );
 }
 
+/**
+ * Block demo / non-admin staff accounts from accessing /wp-admin/ and hide the WP admin bar.
+ */
+function fluffy_block_demo_wp_admin(): void {
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+	$user = wp_get_current_user();
+	$is_demo_or_staff = ( 'demo_staff' === $user->user_login ) || ! current_user_can( 'manage_options' );
+	if ( $is_demo_or_staff && is_admin() && ! wp_doing_ajax() ) {
+		wp_safe_redirect( home_url( '/dashboard/' ) );
+		exit;
+	}
+}
+add_action( 'admin_init', 'fluffy_block_demo_wp_admin' );
+
+add_filter(
+	'show_admin_bar',
+	static function ( bool $show ): bool {
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+		$user = wp_get_current_user();
+		if ( 'demo_staff' === $user->user_login || ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+		return $show;
+	}
+);
+
 function fluffy_enqueue_saas_fonts(): void {
 	wp_enqueue_style(
 		'fluffy-saas-fonts',
@@ -339,14 +369,16 @@ function fluffy_rest_get_car_rental_packages( WP_REST_Request $request ): WP_RES
 	if ( $query->have_posts() ) {
 		while ( $query->have_posts() ) {
 			$query->the_post();
-			$post_id = get_the_ID();
-			$items[] = array(
+			$post_id   = get_the_ID();
+			$raw_price = function_exists( 'get_field' ) ? (string) get_field( 'price', $post_id ) : '0';
+			$num_price = (float) preg_replace( '/[^\d.]/', '', $raw_price );
+			$items[]   = array(
 				'id'          => $post_id,
 				'title'       => get_the_title( $post_id ),
 				'origin'      => function_exists( 'get_field' ) ? (string) get_field( 'origin', $post_id ) : '',
 				'destination' => function_exists( 'get_field' ) ? (string) get_field( 'destination', $post_id ) : '',
 				'car_type'    => function_exists( 'get_field' ) ? (string) get_field( 'car_type', $post_id ) : '',
-				'price'       => function_exists( 'get_field' ) ? (float) get_field( 'price', $post_id ) : 0.0,
+				'price'       => $num_price,
 			);
 		}
 		wp_reset_postdata();

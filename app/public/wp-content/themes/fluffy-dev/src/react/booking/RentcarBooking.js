@@ -161,7 +161,7 @@ export default function RentcarBooking() {
 						</p>
 					</div>
 					<div className="flex items-center gap-2 text-xs font-medium text-[#64748B]">
-						<span className="fluffy-saas-pill bg-[#EEF2FF] text-[#4169F7]">1. {t('การจอง', 'Booking')}</span>
+						<span className="fluffy-saas-pill bg-[var(--fluffy-primary-soft)] text-[var(--fluffy-primary)]">1. {t('การจอง', 'Booking')}</span>
 						<span>→</span>
 						<span className="fluffy-saas-pill bg-white border border-[#E2E8F0]">2. {t('ชำระเงิน', 'Payment')}</span>
 						<span>→</span>
@@ -217,7 +217,7 @@ export default function RentcarBooking() {
 									>
 										<div className="font-semibold text-[#0F172A]">{pkg.car_type || pkg.title}</div>
 										<div className="mt-0.5 text-xs text-[#64748B]">{pkg.origin} → {pkg.destination}</div>
-										<div className="mt-2 text-sm font-bold text-[#4169F7]">{Number(pkg.price).toLocaleString()} {t('บาท', 'THB')}</div>
+										<div className="mt-2 text-sm font-bold text-[var(--fluffy-primary)]">{Number(pkg.price).toLocaleString()} {t('บาท', 'THB')}</div>
 									</button>
 								);
 							})}
@@ -256,14 +256,14 @@ export default function RentcarBooking() {
 									<button
 										type="button"
 										onClick={() => setTripType(0)}
-										className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${tripType === 0 ? 'bg-[#4169F7] text-white' : 'text-[#64748B]'}`}
+										className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${tripType === 0 ? 'bg-[var(--fluffy-primary)] text-white' : 'text-[#64748B]'}`}
 									>
 										{t('เที่ยวเดียว', 'One Way')}
 									</button>
 									<button
 										type="button"
 										onClick={() => setTripType(1)}
-										className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${tripType === 1 ? 'bg-[#4169F7] text-white' : 'text-[#64748B]'}`}
+										className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${tripType === 1 ? 'bg-[var(--fluffy-primary)] text-white' : 'text-[#64748B]'}`}
 									>
 										{t('ไป-กลับ', 'Round Trip')}
 									</button>
@@ -351,7 +351,7 @@ export default function RentcarBooking() {
 								)}
 								<div className="flex justify-between border-t border-[#E2E8F0] pt-3 text-base font-bold text-[#0F172A]">
 									<span>{t('ยอดสุทธิ', 'Total')}</span>
-									<span className="text-[#4169F7]">{finalPrice.toLocaleString()} {t('บาท', 'THB')}</span>
+									<span className="text-[var(--fluffy-primary)]">{finalPrice.toLocaleString()} {t('บาท', 'THB')}</span>
 								</div>
 							</div>
 

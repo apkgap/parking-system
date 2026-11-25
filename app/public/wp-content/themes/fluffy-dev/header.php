@@ -53,7 +53,7 @@ $user_initials      = $current_user ? strtoupper( mb_substr( (string) $current_u
 							'theme_location' => 'primary',
 							'menu_id'        => 'primary-menu',
 							'container'      => false,
-							'menu_class'     => 'fluffy-header__menu m-0 flex list-none items-center gap-1 p-0 [&_a]:block [&_a]:rounded-lg [&_a]:px-3.5 [&_a]:py-2 [&_a]:text-sm [&_a]:font-medium [&_a]:text-[#0F172A] [&_a]:no-underline [&_a]:transition [&_a]:duration-150 [&_a:hover]:bg-[#F8FAFC] [&_a:hover]:text-[#4169F7] [&_.current-menu-item>a]:text-[#4169F7]',
+							'menu_class'     => 'fluffy-header__menu m-0 flex list-none items-center gap-1 p-0 [&_a]:block [&_a]:rounded-lg [&_a]:px-3.5 [&_a]:py-2 [&_a]:text-sm [&_a]:font-medium [&_a]:text-[#0F172A] [&_a]:no-underline [&_a]:transition [&_a]:duration-150 [&_a:hover]:bg-[#F8FAFC] [&_a:hover]:text-[#29B2E2] [&_.current-menu-item>a]:text-[#29B2E2]',
 						)
 					);
 				}
@@ -71,7 +71,7 @@ $user_initials      = $current_user ? strtoupper( mb_substr( (string) $current_u
 				<?php if ( $is_logged_in && $current_user ) : ?>
 					<div id="fluffy-user-menu" class="fluffy-header__user-menu relative">
 						<button id="fluffy-user-menu-trigger" class="fluffy-header__user-trigger flex cursor-pointer items-center gap-2 rounded-lg border border-[#E2E8F0] bg-white px-2.5 py-1.5 text-sm font-medium text-[#0F172A] transition duration-150 hover:border-[#CBD5E1] hover:bg-[#F8FAFC]" type="button" aria-expanded="false" aria-controls="fluffy-user-dropdown">
-							<span class="fluffy-header__avatar flex h-7 w-7 items-center justify-center rounded-full bg-[#EEF2FF] text-xs font-semibold text-[#4169F7]">
+							<span class="fluffy-header__avatar flex h-7 w-7 items-center justify-center rounded-full bg-[#E6F7FD] text-xs font-semibold text-[#29B2E2]">
 								<?php echo esc_html( $user_initials ); ?>
 							</span>
 							<span class="fluffy-header__username hidden max-w-[120px] truncate sm:inline"><?php echo esc_html( $current_user->display_name ); ?></span>
@@ -84,17 +84,17 @@ $user_initials      = $current_user ? strtoupper( mb_substr( (string) $current_u
 								<p class="m-0 truncate text-sm font-semibold text-[#0F172A]"><?php echo esc_html( $current_user->display_name ); ?></p>
 								<p class="m-0 truncate text-xs text-[#64748B]"><?php echo esc_html( $current_user->user_email ); ?></p>
 							</div>
-							<a href="<?php echo esc_url( home_url( '/profile/' ) ); ?>" class="fluffy-header__dropdown-link mt-1 block rounded-lg px-3 py-2 text-sm text-[#0F172A] no-underline transition hover:bg-[#F8FAFC] hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/profile/' ) ); ?>" class="fluffy-header__dropdown-link mt-1 block rounded-lg px-3 py-2 text-sm text-[#0F172A] no-underline transition hover:bg-[#F8FAFC] hover:text-[#29B2E2]">
 								<?php yp_text( 'โปรไฟล์และการจองของฉัน', 'My Profile & Bookings' ); ?>
 							</a>
 							<?php if ( $is_privileged_user ) : ?>
-								<a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>" class="fluffy-header__dropdown-link block rounded-lg px-3 py-2 text-sm text-[#0F172A] no-underline transition hover:bg-[#F8FAFC] hover:text-[#4169F7]">
+								<a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>" class="fluffy-header__dropdown-link block rounded-lg px-3 py-2 text-sm text-[#0F172A] no-underline transition hover:bg-[#F8FAFC] hover:text-[#29B2E2]">
 									<?php yp_text( 'แดชบอร์ดจัดการ', 'Admin Dashboard' ); ?>
 								</a>
-								<a href="<?php echo esc_url( home_url( '/service/' ) ); ?>" class="fluffy-header__dropdown-link block rounded-lg px-3 py-2 text-sm text-[#0F172A] no-underline transition hover:bg-[#F8FAFC] hover:text-[#4169F7]">
+								<a href="<?php echo esc_url( home_url( '/service/' ) ); ?>" class="fluffy-header__dropdown-link block rounded-lg px-3 py-2 text-sm text-[#0F172A] no-underline transition hover:bg-[#F8FAFC] hover:text-[#29B2E2]">
 									<?php yp_text( 'ควบคุมบริการ', 'Service Control' ); ?>
 								</a>
-								<a href="<?php echo esc_url( home_url( '/create-driver-job/' ) ); ?>" class="fluffy-header__dropdown-link block rounded-lg px-3 py-2 text-sm text-[#0F172A] no-underline transition hover:bg-[#F8FAFC] hover:text-[#4169F7]">
+								<a href="<?php echo esc_url( home_url( '/create-driver-job/' ) ); ?>" class="fluffy-header__dropdown-link block rounded-lg px-3 py-2 text-sm text-[#0F172A] no-underline transition hover:bg-[#F8FAFC] hover:text-[#29B2E2]">
 									<?php yp_text( 'สร้างงานคนขับ', 'Create Driver Job' ); ?>
 								</a>
 							<?php endif; ?>
@@ -109,7 +109,7 @@ $user_initials      = $current_user ? strtoupper( mb_substr( (string) $current_u
 					<a id="fluffy-header-login" class="fluffy-header__btn-login hidden rounded-lg border border-[#E2E8F0] bg-white px-3.5 py-2 text-sm font-medium text-[#0F172A] no-underline transition duration-150 hover:bg-[#F8FAFC] sm:inline-flex" href="<?php echo esc_url( home_url( '/login/' ) ); ?>">
 						<?php yp_text( 'เข้าสู่ระบบ', 'Sign In' ); ?>
 					</a>
-					<a id="fluffy-header-register" class="fluffy-header__btn-register inline-flex rounded-lg bg-[#4169F7] px-3.5 py-2 text-sm font-semibold text-white no-underline transition duration-150 hover:bg-[#3154D9]" href="<?php echo esc_url( home_url( '/register/' ) ); ?>">
+					<a id="fluffy-header-register" class="fluffy-header__btn-register inline-flex rounded-lg bg-[#29B2E2] px-3.5 py-2 text-sm font-semibold text-white no-underline transition duration-150 hover:bg-[#1E9BC7]" href="<?php echo esc_url( home_url( '/register/' ) ); ?>">
 						<?php yp_text( 'สมัครสมาชิก', 'Register' ); ?>
 					</a>
 				<?php endif; ?>
@@ -129,7 +129,7 @@ $user_initials      = $current_user ? strtoupper( mb_substr( (string) $current_u
 									'theme_location' => 'mobile',
 									'menu_id'        => 'mobile-menu',
 									'container'      => false,
-									'menu_class'     => 'fluffy-header__mobile-list m-0 list-none space-y-1 p-0 [&_a]:block [&_a]:rounded-lg [&_a]:px-3 [&_a]:py-2.5 [&_a]:text-sm [&_a]:font-medium [&_a]:text-[#0F172A] [&_a]:no-underline [&_a:hover]:bg-[#F8FAFC] [&_a:hover]:text-[#4169F7]',
+									'menu_class'     => 'fluffy-header__mobile-list m-0 list-none space-y-1 p-0 [&_a]:block [&_a]:rounded-lg [&_a]:px-3 [&_a]:py-2.5 [&_a]:text-sm [&_a]:font-medium [&_a]:text-[#0F172A] [&_a]:no-underline [&_a:hover]:bg-[#F8FAFC] [&_a:hover]:text-[#29B2E2]',
 								)
 							);
 						}

@@ -77,7 +77,7 @@ get_header();
 		<?php endif; ?>
 
 		<div class="mt-6 flex justify-center gap-3">
-			<a id="fluffy-payment-return" class="fluffy-payment-complete__btn inline-flex rounded-lg bg-[#4169F7] px-5 py-2.5 text-sm font-semibold text-white no-underline transition hover:bg-[#3154D9]" href="<?php echo esc_url( home_url( '/service/' ) ); ?>">
+			<a id="fluffy-payment-return" class="fluffy-payment-complete__btn inline-flex rounded-lg bg-[#29B2E2] px-5 py-2.5 text-sm font-semibold text-white no-underline transition hover:bg-[#1E9BC7]" href="<?php echo esc_url( home_url( '/service/' ) ); ?>">
 				<?php yp_text( 'กลับหน้าควบคุมบริการ', 'Return to Service Control' ); ?>
 			</a>
 		</div>

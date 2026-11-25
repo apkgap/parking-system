@@ -46,7 +46,7 @@ export default function DriverProfile() {
 			<div className="fluffy-saas-container space-y-6">
 				<div className="fluffy-saas-card flex items-center justify-between gap-4">
 					<div className="flex items-center gap-4">
-						<div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EEF2FF] text-xl font-bold text-[#4169F7]">
+						<div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--fluffy-primary-soft)] text-xl font-bold text-[var(--fluffy-primary)]">
 							{initials}
 						</div>
 						<div>
@@ -107,7 +107,7 @@ export default function DriverProfile() {
 											{job.fullname_park || job.customer_name || ''} {job.location_park ? `· ${job.location_park}` : ''}
 										</p>
 									</div>
-									<span className="fluffy-saas-pill bg-[#EEF2FF] text-[#4169F7]">
+									<span className="fluffy-saas-pill bg-[var(--fluffy-primary-soft)] text-[var(--fluffy-primary)]">
 										{job.status_job || job.status || 'pending'}
 									</span>
 								</div>

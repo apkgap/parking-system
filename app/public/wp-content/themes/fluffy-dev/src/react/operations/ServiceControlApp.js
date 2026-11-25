@@ -39,7 +39,7 @@ export default function ServiceControlApp() {
 						{actions.map((item) => (
 							<a
 								id={`fluffy-service-action-${item.id}`}
-								className="fluffy-service__card fluffy-saas-card block no-underline transition hover:border-[#4169F7]"
+								className="fluffy-service__card fluffy-saas-card block no-underline transition hover:border-[var(--fluffy-primary)]"
 								href={item.href}
 								key={item.id}
 							>

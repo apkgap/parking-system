@@ -32,7 +32,7 @@ export default function ThankYouApp() {
 									<span className="text-[#64748B]">
 										{isCarRental ? t('หมายเลขการจองเช่ารถ', 'Car Rental Booking No.') : t('หมายเลขการจองที่จอดรถ', 'Parking Booking No.')}
 									</span>
-									<span className="font-bold text-[#4169F7]">{orderCode}</span>
+									<span className="font-bold text-[var(--fluffy-primary)]">{orderCode}</span>
 								</div>
 							)}
 							{email && (

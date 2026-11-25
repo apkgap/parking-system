@@ -51,17 +51,17 @@ $footer_info = function_exists( 'get_field' ) ? (string) get_field( 'footer_info
 					</h3>
 					<ul class="fluffy-footer__list m-0 list-none space-y-2.5 p-0 text-sm">
 						<li>
-							<a href="<?php echo esc_url( home_url( '/carpark/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/carpark/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'จองที่จอดรถสนามบิน', 'Airport Parking' ); ?>
 							</a>
 						</li>
 						<li>
-							<a href="<?php echo esc_url( home_url( '/carrent/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/carrent/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'จองรถเช่าพร้อมคนขับ', 'Private Car Rental' ); ?>
 							</a>
 						</li>
 						<li>
-							<a href="<?php echo esc_url( home_url( '/checkout/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/checkout/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'ชำระเงิน', 'Checkout' ); ?>
 							</a>
 						</li>
@@ -75,17 +75,17 @@ $footer_info = function_exists( 'get_field' ) ? (string) get_field( 'footer_info
 					</h3>
 					<ul class="fluffy-footer__list m-0 list-none space-y-2.5 p-0 text-sm">
 						<li>
-							<a href="<?php echo esc_url( home_url( '/profile/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/profile/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'ประวัติการจอง', 'My Bookings' ); ?>
 							</a>
 						</li>
 						<li>
-							<a href="<?php echo esc_url( home_url( '/login/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/login/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'เข้าสู่ระบบ', 'Sign In' ); ?>
 							</a>
 						</li>
 						<li>
-							<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/register/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'สมัครสมาชิก', 'Register' ); ?>
 							</a>
 						</li>
@@ -99,17 +99,17 @@ $footer_info = function_exists( 'get_field' ) ? (string) get_field( 'footer_info
 					</h3>
 					<ul class="fluffy-footer__list m-0 list-none space-y-2.5 p-0 text-sm">
 						<li>
-							<a href="<?php echo esc_url( home_url( '/check-in/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/check-in/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'สแกน QR Check-in', 'QR Check-in' ); ?>
 							</a>
 						</li>
 						<li>
-							<a href="<?php echo esc_url( home_url( '/check-out/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/check-out/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'สแกน QR Check-out', 'QR Check-out' ); ?>
 							</a>
 						</li>
 						<li>
-							<a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#4169F7]">
+							<a href="<?php echo esc_url( home_url( '/dashboard/' ) ); ?>" class="fluffy-footer__link text-[#64748B] no-underline transition hover:text-[#29B2E2]">
 								<?php yp_text( 'แดชบอร์ด', 'Dashboard' ); ?>
 							</a>
 						</li>

@@ -5,7 +5,7 @@ import { BookingListSkeleton } from '../shared/Skeleton';
 
 const STATUS_BADGES = {
 	confirmed: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-	'checked-in': 'bg-[#EEF2FF] text-[#4169F7] border border-indigo-200',
+	'checked-in': 'bg-[var(--fluffy-primary-soft)] text-[var(--fluffy-primary)] border border-indigo-200',
 	'checked-out': 'bg-slate-100 text-slate-700 border border-slate-200',
 	cancel: 'bg-red-50 text-red-700 border border-red-200',
 	pending: 'bg-amber-50 text-amber-700 border border-amber-200',
@@ -106,14 +106,14 @@ export default function CustomerProfile() {
 			<div className="fluffy-saas-container space-y-6">
 				<div className="fluffy-saas-card flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 					<div className="flex items-center gap-4">
-						<div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EEF2FF] text-xl font-bold text-[#4169F7]">
+						<div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--fluffy-primary-soft)] text-xl font-bold text-[var(--fluffy-primary)]">
 							{initials}
 						</div>
 						<div>
 							<h1 className="fluffy-saas-title">{user.displayName}</h1>
 							<p className="fluffy-saas-subtitle">{user.email}</p>
 							<div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
-								<span className="fluffy-saas-pill bg-[#EEF2FF] text-[#4169F7]">
+								<span className="fluffy-saas-pill bg-[var(--fluffy-primary-soft)] text-[var(--fluffy-primary)]">
 									{t('สมาชิกยืนยันแล้ว', 'Verified Member')}
 								</span>
 								{user.registered && (
@@ -132,7 +132,7 @@ export default function CustomerProfile() {
 						type="button"
 						onClick={() => setActiveTab('bookings')}
 						className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
-							activeTab === 'bookings' ? 'bg-[#4169F7] text-white' : 'text-[#64748B] hover:text-[#0F172A]'
+							activeTab === 'bookings' ? 'bg-[var(--fluffy-primary)] text-white' : 'text-[#64748B] hover:text-[#0F172A]'
 						}`}
 					>
 						{t('ประวัติการจองที่จอดรถ', 'Booking History')}
@@ -141,7 +141,7 @@ export default function CustomerProfile() {
 						type="button"
 						onClick={() => setActiveTab('plates')}
 						className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
-							activeTab === 'plates' ? 'bg-[#4169F7] text-white' : 'text-[#64748B] hover:text-[#0F172A]'
+							activeTab === 'plates' ? 'bg-[var(--fluffy-primary)] text-white' : 'text-[#64748B] hover:text-[#0F172A]'
 						}`}
 					>
 						{t('ทะเบียนรถของฉัน', 'Saved Vehicles')} ({plates.length})
@@ -269,7 +269,7 @@ export default function CustomerProfile() {
 								<label htmlFor="fluffy-plate-number" className="fluffy-saas-label">{t('เลขทะเบียนรถ', 'License Plate')}</label>
 								<input id="fluffy-plate-number" className="fluffy-saas-input" type="text" value={plateNumber} onChange={(e) => setPlateNumber(e.target.value)} required />
 							</div>
-							{plateMessage && <p className="text-xs text-[#4169F7]">{plateMessage}</p>}
+							{plateMessage && <p className="text-xs text-[var(--fluffy-primary)]">{plateMessage}</p>}
 							<button type="submit" disabled={plateSaving} className="fluffy-saas-btn fluffy-saas-btn-primary w-full">
 								{plateSaving ? t('กำลังบันทึก...', 'Saving...') : t('บันทึกทะเบียนรถ', 'Save Vehicle')}
 							</button>
