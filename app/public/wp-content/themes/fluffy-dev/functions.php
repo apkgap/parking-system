@@ -491,67 +491,39 @@ function yp_popup_search(){
 }
 
 function polylang_slink() {
-	if ( ! function_exists( 'pll_the_languages' ) ) return;
+	if ( ! function_exists( 'pll_the_languages' ) ) {
+		return;
+	}
 
-	  // Gets the pll_the_languages() raw code
-	  $languages = pll_the_languages( array(
-	    'display_names_as'       => 'name',
-	    'hide_if_no_translation' => 0,
-			'show_flags' => 1,
-	    'raw'                    => true
-	  ) );
-		// print_r($languages);
+	$languages = pll_the_languages(
+		array(
+			'display_names_as'       => 'name',
+			'hide_if_no_translation' => 0,
+			'show_flags'             => 0,
+			'raw'                    => true,
+		)
+	);
 
-	  // $output = '';
-
-	  // Checks if the $languages is not empty
-	  if ( ! empty( $languages ) ) {
-
-	    // Creates the $output variable with languages container
-	  ?>
-    <div class="polylang_slink">
-
-    <?php
-
-	    // Runs the loop through all languages
-
-       foreach ( $languages as $language ) {
-         $id             = $language['id'];
-         $name           = $language['name'];
-         $url            = $language['url'];
-         $current        = $language['current_lang'] ? ' languages__item--current' : '';
-         $no_translation = $language['no_translation'];
-         ?>
-         <?php if ($current): ?>
-
-             <?php
-              foreach ( $languages as $language ) {
-
-                   // Variables containing language data
-                   $id             = $language['id'];
-                   $name           = $language['name'];
-                   $url            = $language['url'];
-                   $current        = $language['current_lang'] ? ' languages__item--current' : '';
-                   $no_translation = $language['no_translation'];
-                       ?>
-                       <a href="<?php echo $url; ?>" class="languages__item <?php echo $current; ?>">
-												 <div class="l-text">
-													 <?php echo $name; ?>
-												 </div>
-                       </a>
-                       <?php
-                 }
-                ?>
-
-
-         <?php endif; ?>
-
-         <?php } ?>
-      </div>
-
-<?php
-}
-	  // return $output;
+	if ( empty( $languages ) || ! is_array( $languages ) ) {
+		return;
+	}
+	?>
+	<div class="polylang_slink inline-flex items-center gap-0.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-0.5">
+		<?php foreach ( $languages as $language ) : ?>
+			<?php
+			$name       = isset( $language['name'] ) ? (string) $language['name'] : '';
+			$url        = isset( $language['url'] ) ? (string) $language['url'] : '';
+			$is_current = ! empty( $language['current_lang'] );
+			$item_class = $is_current
+				? 'languages__item languages__item--current inline-flex min-w-[36px] items-center justify-center rounded-md bg-[#29B2E2] px-2.5 py-1 text-xs font-semibold text-white no-underline transition duration-150'
+				: 'languages__item inline-flex min-w-[36px] items-center justify-center rounded-md px-2.5 py-1 text-xs font-medium text-[#64748B] no-underline transition duration-150 hover:bg-white hover:text-[#0F172A]';
+			?>
+			<a href="<?php echo esc_url( $url ); ?>" class="<?php echo esc_attr( $item_class ); ?>"<?php echo $is_current ? ' aria-current="true"' : ''; ?>>
+				<span class="l-text leading-none"><?php echo esc_html( $name ); ?></span>
+			</a>
+		<?php endforeach; ?>
+	</div>
+	<?php
 }
 
 add_shortcode( 'polylang_slink', 'polylang_slink' );
