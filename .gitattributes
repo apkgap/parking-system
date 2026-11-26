@@ -1,0 +1,3 @@
+*.php linguist-language=PHP
+*.phpx linguist-detectable=false
+*.scss linguist-detectable=false
