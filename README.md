@@ -12,7 +12,7 @@
 ## แผนผังระบบและ Flow Chart (Site Map & Architecture)
 
 ### ภาพรวมโครงสร้างและเส้นทางหน้าเว็บ (Site Map)
-![Site Map & System Architecture](docs/images/system-sitemap-flowchart.png)
+![Site Map & System Architecture](docs/images/system-sitemap.jpg)
 
 ### Flow Chart: ระบบจองที่จอดรถสนามบิน (`/carpark/`)
 ![Flow Chart ระบบจองที่จอดรถสนามบิน](docs/images/flowchart-carpark-classic.png)
