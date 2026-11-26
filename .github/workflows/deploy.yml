@@ -1,48 +1,97 @@
-name: Deploy Theme to Production
+name: Fast FTP Deploy
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+concurrency:
+  group: ftp-deploy
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
-    name: Build React & Deploy Theme via FTP
+  deploy:
+    name: FTP Sync Engine
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: app/public/wp-content/themes/fluffy-dev/package-lock.json
-
-      - name: Install dependencies & build React bundles
-        working-directory: app/public/wp-content/themes/fluffy-dev
-        run: |
-          npm ci
-          npm run build
-
-      - name: Deploy theme files via FTP
-        if: ${{ env.FTP_SERVER != '' }}
+      - name: Check FTP configuration
+        id: config
+        shell: bash
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          if [[ -z "$FTP_SERVER" || -z "$FTP_USERNAME" || -z "$FTP_PASSWORD" ]]; then
+            echo "FTP server secrets are not configured yet. Skipping deploy."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout repository
+        if: steps.config.outputs.configured == 'true'
+        uses: actions/checkout@v4
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: app/public/wp-content/themes/fluffy-dev/
-          server-dir: ${{ secrets.FTP_THEME_DIR }}
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/src/**
-            package.json
-            package-lock.json
-            AGENTS.md
+          fetch-depth: 2
+
+      - name: Detect changed deploy components
+        id: changes
+        if: steps.config.outputs.configured == 'true'
+        shell: bash
+        run: |
+          DEPLOY_THEME=false
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            DEPLOY_THEME=true
+          else
+            if ! CHANGED_FILES="$( git diff --name-only "${GITHUB_SHA}^" "$GITHUB_SHA" )"; then
+              echo "Could not determine changed files; deploying theme."
+              DEPLOY_THEME=true
+            elif grep -qE '^(\.github/workflows/deploy\.yml|app/public/wp-content/themes/fluffy-dev/)' <<< "$CHANGED_FILES"; then
+              DEPLOY_THEME=true
+            fi
+          fi
+
+          echo "theme=$DEPLOY_THEME" >> "$GITHUB_OUTPUT"
+
+      - name: Install lftp
+        if: steps.config.outputs.configured == 'true' && steps.changes.outputs.theme == 'true'
+        run: sudo apt-get update -y && sudo apt-get install -y lftp
+
+      - name: Deploy fluffy-dev theme via lftp
+        if: steps.config.outputs.configured == 'true' && steps.changes.outputs.theme == 'true'
+        shell: bash
+        run: |
+          THEME_RAW="${{ secrets.FTP_THEME_DIR }}"
+          THEME_RAW="${THEME_RAW#/}"
+          THEME_RAW="${THEME_RAW%/}"
+
+          if [[ "$THEME_RAW" == *"fluffy-dev" ]]; then
+            THEME_DIR="$THEME_RAW"
+          elif [[ -n "$THEME_RAW" ]]; then
+            THEME_DIR="${THEME_RAW}/fluffy-dev"
+          else
+            THEME_DIR="fluffy-dev"
+          fi
+
+          echo "Target Theme Dir: $THEME_DIR"
+
+          LFTP_COMMANDS="$( mktemp )"
+          {
+            echo "open -u \"${{ secrets.FTP_USERNAME }}\",\"${{ secrets.FTP_PASSWORD }}\" \"${{ secrets.FTP_SERVER }}\""
+            echo 'set cmd:fail-exit yes;'
+            echo 'set ftp:ssl-allow yes;'
+            echo 'set ssl:verify-certificate no;'
+            echo 'set ftp:passive-mode yes;'
+            echo 'set ftp:prefer-epsv no;'
+            echo 'set net:timeout 120;'
+            echo 'set net:max-retries 10;'
+            echo 'set net:reconnect-interval-base 3;'
+            echo 'echo "=== Deploying fluffy-dev theme ===";'
+            echo "mirror -R -v --only-newer --exclude-glob .git* --exclude-glob node_modules/ --exclude-glob src/ --exclude-glob package*.json --exclude-glob AGENTS.md --exclude-glob .windsurf/ ./app/public/wp-content/themes/fluffy-dev/ \"$THEME_DIR/\";"
+            echo 'quit'
+          } > "$LFTP_COMMANDS"
+
+          lftp -f "$LFTP_COMMANDS"
