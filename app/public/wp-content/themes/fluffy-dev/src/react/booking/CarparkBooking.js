@@ -701,9 +701,9 @@ export default function CarparkBooking() {
 							</section>
 						)}
 
-						{/* Wizard Footer Navigation */}
-						<div id="fluffy-carpark-wizard-actions" className="fluffy-carpark__wizard-actions flex items-center justify-between gap-3 pt-1">
-							{currentStep > 1 ? (
+						{/* Wizard Back Navigation */}
+						{currentStep > 1 && (
+							<div id="fluffy-carpark-wizard-actions" className="fluffy-carpark__wizard-actions flex items-center justify-start pt-1">
 								<button
 									id="fluffy-wizard-prev"
 									className="fluffy-saas-btn fluffy-saas-btn-secondary"
@@ -712,27 +712,8 @@ export default function CarparkBooking() {
 								>
 									← {t('ย้อนกลับ', 'Back')}
 								</button>
-							) : (
-								<span />
-							)}
-
-							{currentStep < 4 ? (
-								<button
-									key="wizard-next-btn"
-									id="fluffy-wizard-next"
-									className="fluffy-saas-btn fluffy-saas-btn-primary"
-									type="button"
-									disabled={checking}
-									onClick={handleNextStep}
-								>
-									{checking ? t('กำลังค้นหาช่องว่าง...', 'Checking availability...') : `${t('ถัดไป', 'Continue')} →`}
-								</button>
-							) : (
-								<button key="wizard-submit-btn" id="fluffy-wizard-submit" type="submit" disabled={submitting} className="fluffy-saas-btn fluffy-saas-btn-primary">
-									{submitting ? t('กำลังดำเนินการ...', 'Submitting...') : t('ยืนยันการจอง', 'Confirm Booking')}
-								</button>
-							)}
-						</div>
+							</div>
+						)}
 					</div>
 
 					<aside id="fluffy-carpark-sidebar" className="fluffy-carpark__sidebar lg:col-span-4">
