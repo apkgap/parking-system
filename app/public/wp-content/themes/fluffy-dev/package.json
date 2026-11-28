@@ -13,6 +13,7 @@
     "@wordpress/scripts": "^30.15.0"
   },
   "dependencies": {
+    "@remixicon/react": "^4.9.0",
     "date-fns": "^4.4.0",
     "react-day-picker": "^10.0.2",
     "zustand": "^5.1.0"

@@ -186,6 +186,7 @@ function fluffy_enqueue_react_apps(): void {
 		'customRestUrl'   => esc_url_raw( rest_url( 'custom/v1/' ) ),
 		'carrentRestUrl'  => esc_url_raw( rest_url( 'carrent/' ) ),
 		'homeUrl'         => esc_url_raw( home_url( '/' ) ),
+		'brandLogoUrl'    => esc_url_raw( $theme_uri . '/customize/img/brand-logo.svg' ),
 		'checkoutUrl'     => function_exists( 'wc_get_checkout_url' ) ? esc_url_raw( wc_get_checkout_url() ) : esc_url_raw( home_url( '/checkout/' ) ),
 		'logoutUrl'       => esc_url_raw( wp_logout_url( home_url( '/' ) ) ),
 		'lineOaLink'      => esc_url_raw( ( function_exists( 'get_field' ) && get_field( 'line_oa_link', 'option' ) ) ? (string) get_field( 'line_oa_link', 'option' ) : 'https://lin.ee/Bm45y3b' ),

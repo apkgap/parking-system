@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { getConfig, wpAjax, wpRest } from '../shared/api';
 import { t } from '../shared/i18n';
+import {
+	filterSpacesByLocation,
+	getSpaceCode,
+	isValidLicensePlate,
+	validateCarSlotsForStep2,
+} from './parkingMapUtils';
 
 export const EMPTY_SENDING_ADDON = {
 	flightDepart: '',
@@ -39,6 +45,47 @@ const getInitialProfile = () => {
 	};
 };
 
+function buildSelectedSpacesFromCarSlots(carSlots) {
+	return (carSlots || [])
+		.filter((car) => car && car.space && car.space.parking_post_id)
+		.map((car) => ({
+			id: car.space.id,
+			parking_post_id: car.space.parking_post_id,
+			parking_id: car.space.parking_id,
+			title: car.space.title,
+			assignedVehicleType: car.assignedVehicleType || '',
+			otherTypeCar: car.otherTypeCar || '',
+			licensePlate: car.licensePlate || '',
+			carIndex: car.carIndex,
+		}));
+}
+
+function buildCarSlotsFromAssignments(assignments, prevCarSlots, vehicleTypes, savedPlates) {
+	const defaultType = String(vehicleTypes[0]?.id || '');
+	return assignments.map((assignment, idx) => {
+		const prev = prevCarSlots[idx];
+		const existingPlate = prev ? prev.licensePlate : savedPlates[idx]?.tabienrod_number || '';
+		return {
+			carIndex: idx,
+			assignedVehicleType: assignment.type || prev?.assignedVehicleType || defaultType,
+			otherTypeCar: assignment.otherTypeCar || '',
+			licensePlate: existingPlate,
+			space: prev?.space || null,
+		};
+	});
+}
+
+function findNextActiveCarIndex(carSlots, fallbackIndex = 0) {
+	if (!Array.isArray(carSlots) || carSlots.length === 0) {
+		return 0;
+	}
+	const firstUnassigned = carSlots.findIndex((c) => !c.space);
+	if (firstUnassigned !== -1) {
+		return firstUnassigned;
+	}
+	return Math.min(Math.max(0, fallbackIndex), carSlots.length - 1);
+}
+
 export const useCarparkStore = create((set, get) => ({
 	// 1. Date, Time & Location
 	startDate: '',
@@ -51,15 +98,19 @@ export const useCarparkStore = create((set, get) => ({
 	vehicleTypes: [],
 	vehicleRows: [{ type: '', quantity: 1, otherTypeCar: '' }],
 
-	// 3. Parking Spaces, Availability & 2D Map
+	// 3. Parking Spaces, Availability & Per-Car Slot Selection
 	spaces: [],
 	blackouts: [],
 	occupiedIds: [],
 	savedPlates: [],
+	carSlots: [{ carIndex: 0, assignedVehicleType: '', otherTypeCar: '', licensePlate: '', space: null }],
+	activeCarIndex: 0,
 	selectedSpaces: [],
 	viewMode: 'status',
 	hasChecked: false,
 	conditionError: null,
+	loadError: null,
+	slotConflicts: [],
 
 	// 4. Add-on Services
 	servicePickup: false,
@@ -82,6 +133,11 @@ export const useCarparkStore = create((set, get) => ({
 
 	// Simple setters
 	setField: (key, value) => set({ [key]: value }),
+	setActiveCarIndex: (index) =>
+		set((state) => ({
+			activeCarIndex: Math.min(Math.max(0, Number(index) || 0), Math.max(0, state.carSlots.length - 1)),
+		})),
+	clearSlotConflicts: () => set({ slotConflicts: [] }),
 	setProfile: (updater) =>
 		set((state) => ({
 			profile: typeof updater === 'function' ? updater(state.profile) : updater,
@@ -123,21 +179,41 @@ export const useCarparkStore = create((set, get) => ({
 		wpRest(`${config.customRestUrl}vehicle_type?lang=${config.lang}`)
 			.then((res) => {
 				const list = Array.isArray(res) ? res : res.data || [];
-				set((state) => ({
-					vehicleTypes: list,
-					vehicleRows:
+				set((state) => {
+					const nextRows =
 						list.length > 0
 							? state.vehicleRows.map((row, idx) =>
 									idx === 0 && !row.type ? { ...row, type: String(list[0].id) } : row
 							  )
-							: state.vehicleRows,
-				}));
+							: state.vehicleRows;
+					const assignments = [];
+					nextRows.forEach((row) => {
+						const qty = Math.max(0, Number(row.quantity) || 0);
+						for (let i = 0; i < qty; i++) {
+							assignments.push({ type: row.type, otherTypeCar: row.otherTypeCar || '' });
+						}
+					});
+					const nextCarSlots = buildCarSlotsFromAssignments(assignments, state.carSlots, list, state.savedPlates);
+					return {
+						vehicleTypes: list,
+						vehicleRows: nextRows,
+						carSlots: nextCarSlots,
+						selectedSpaces: buildSelectedSpacesFromCarSlots(nextCarSlots),
+					};
+				});
 			})
 			.catch(() => set({ vehicleTypes: [] }));
 
 		wpRest(`${config.customRestUrl}parking_space`)
-			.then((res) => set({ spaces: Array.isArray(res) ? res : res.data || [] }))
-			.catch(() => set({ spaces: [] }));
+			.then((res) => {
+				const list = Array.isArray(res) ? res : res.data || [];
+				set({ spaces: list, loadError: null });
+			})
+			.catch((err) => {
+				set({
+					loadError: err?.message || t('ไม่สามารถโหลดข้อมูลช่องจอดได้', 'Failed to load parking spaces.'),
+				});
+			});
 
 		wpRest(`${config.customRestUrl}parking_booking_blackouts`)
 			.then((res) => set({ blackouts: Array.isArray(res) ? res : [] }))
@@ -145,23 +221,37 @@ export const useCarparkStore = create((set, get) => ({
 
 		if (user.id) {
 			wpRest(`${config.customRestUrl}tabien_rod?user_id=${user.id}&per_page=50`)
-				.then((res) => set({ savedPlates: res?.items || [] }))
+				.then((res) => {
+					const plates = res?.items || [];
+					set((state) => {
+						const nextCarSlots = state.carSlots.map((car, idx) =>
+							!car.licensePlate && plates[idx]?.tabienrod_number
+								? { ...car, licensePlate: plates[idx].tabienrod_number }
+								: car
+						);
+						return {
+							savedPlates: plates,
+							carSlots: nextCarSlots,
+							selectedSpaces: buildSelectedSpacesFromCarSlots(nextCarSlots),
+						};
+					});
+				})
 				.catch(() => set({ savedPlates: [] }));
 		}
 	},
 
 	// Vehicle row mutations
 	syncSelectedSpacesWithVehicles: () => {
-		const totalVehicles = get().getTotalVehicles();
 		const assignments = get().getVehicleAssignments();
-		const { vehicleTypes } = get();
-		set((state) => ({
-			selectedSpaces: state.selectedSpaces.slice(0, totalVehicles).map((space, idx) => ({
-				...space,
-				assignedVehicleType: assignments[idx]?.type || space.assignedVehicleType || vehicleTypes[0]?.id || '',
-				otherTypeCar: assignments[idx]?.otherTypeCar || space.otherTypeCar || '',
-			})),
-		}));
+		const { vehicleTypes, savedPlates } = get();
+		set((state) => {
+			const nextCarSlots = buildCarSlotsFromAssignments(assignments, state.carSlots, vehicleTypes, savedPlates);
+			return {
+				carSlots: nextCarSlots,
+				activeCarIndex: findNextActiveCarIndex(nextCarSlots, state.activeCarIndex),
+				selectedSpaces: buildSelectedSpacesFromCarSlots(nextCarSlots),
+			};
+		});
 	},
 
 	updateVehicleRow: (index, key, value) => {
@@ -239,29 +329,93 @@ export const useCarparkStore = create((set, get) => ({
 		return null;
 	},
 
-	// Async API Actions
+	// Async API Actions: fetches fresh WP parking_space posts + occupiedIds and reconciles existing carSlots
 	checkAvailability: async () => {
 		const errObj = get().validateScheduleConditions();
 		if (errObj) {
-			set({ conditionError: errObj, hasChecked: false, selectedSpaces: [] });
+			set({ conditionError: errObj, hasChecked: false });
 			return false;
 		}
 		const { startDate, startTime, endDate, endTime, location } = get();
-		set({ conditionError: null, checking: true });
+		const config = getConfig();
+		set({ conditionError: null, loadError: null, checking: true });
+
 		try {
-			const occupied = await wpAjax('check_parking_availability', {
-				startDateTime: `${startDate} ${startTime}`,
-				endDateTime: `${endDate} ${endTime}`,
-				locationChoose: location,
+			const [spacesRes, occupied] = await Promise.all([
+				wpRest(`${config.customRestUrl}parking_space`),
+				wpAjax('check_parking_availability', {
+					startDateTime: `${startDate} ${startTime}`,
+					endDateTime: `${endDate} ${endTime}`,
+					locationChoose: location,
+				}),
+			]);
+
+			const freshSpaces = Array.isArray(spacesRes) ? spacesRes : spacesRes?.data || [];
+			const freshOccupiedIds = (occupied || []).map((item) => Number(item.id));
+			const validLocationSpaces = filterSpacesByLocation(freshSpaces, location);
+			const validLocationSpaceMap = new Map(validLocationSpaces.map((s) => [Number(s.id), s]));
+
+			const assignments = get().getVehicleAssignments();
+			const { vehicleTypes, savedPlates, carSlots: prevCarSlots } = get();
+			const syncedSlots = buildCarSlotsFromAssignments(assignments, prevCarSlots, vehicleTypes, savedPlates);
+
+			const conflicts = [];
+			const reconciledSlots = syncedSlots.map((car) => {
+				if (!car.space) {
+					return car;
+				}
+				const postId = Number(car.space.parking_post_id);
+				const freshSpace = validLocationSpaceMap.get(postId);
+				if (!freshSpace) {
+					conflicts.push({
+						carIndex: car.carIndex,
+						spaceCode: car.space.title,
+						reason: 'location_changed',
+					});
+					return { ...car, space: null };
+				}
+				if (freshOccupiedIds.includes(postId)) {
+					conflicts.push({
+						carIndex: car.carIndex,
+						spaceCode: getSpaceCode(freshSpace),
+						reason: 'occupied',
+					});
+					return { ...car, space: null };
+				}
+				// Refresh title/parking_id from latest WordPress data
+				return {
+					...car,
+					space: {
+						id: freshSpace.id,
+						parking_post_id: freshSpace.id,
+						parking_id: freshSpace.parking_id || freshSpace.title || '',
+						title: getSpaceCode(freshSpace),
+					},
+				};
 			});
+
+			const nextActive =
+				conflicts.length > 0
+					? conflicts[0].carIndex
+					: findNextActiveCarIndex(reconciledSlots, get().activeCarIndex);
+
 			set({
-				occupiedIds: (occupied || []).map((item) => Number(item.id)),
-				selectedSpaces: [],
+				spaces: freshSpaces,
+				occupiedIds: freshOccupiedIds,
+				carSlots: reconciledSlots,
+				activeCarIndex: nextActive,
+				selectedSpaces: buildSelectedSpacesFromCarSlots(reconciledSlots),
+				slotConflicts: conflicts,
 				hasChecked: true,
+				loadError: null,
 			});
 			return true;
 		} catch (err) {
-			set({ conditionError: { type: 'blackout', message: err.message }, hasChecked: false });
+			// Preserve carSlots and typed license plates on failure so retry doesn't lose user input
+			set({
+				loadError: err?.message || t('ไม่สามารถโหลดข้อมูลช่องจอดได้ กรุณาลองอีกครั้ง', 'Failed to load parking spaces. Please try again.'),
+				hasChecked: false,
+			});
 			return false;
 		} finally {
 			set({ checking: false });
@@ -302,59 +456,91 @@ export const useCarparkStore = create((set, get) => ({
 			.catch(() => {});
 	},
 
-	toggleSpace: (space) => {
-		const { occupiedIds, selectedSpaces, vehicleTypes, savedPlates } = get();
-		if (!space || occupiedIds.includes(Number(space.id))) {
-			return;
+	/**
+	 * Assign or toggle a parking space for the target car (defaults to activeCarIndex).
+	 * - Never allows duplicate Post IDs across cars in the same booking.
+	 * - Preserves licensePlate, assignedVehicleType, and other cars' data when changing slots.
+	 */
+	selectSpaceForCar: (space, explicitCarIndex = null) => {
+		const { occupiedIds, carSlots, activeCarIndex } = get();
+		const postId = Number(space?.id || 0);
+		if (!space || !postId || occupiedIds.includes(postId) || carSlots.length === 0) {
+			return { changed: false, carIndex: activeCarIndex };
 		}
-		const totalVehicles = get().getTotalVehicles();
-		const assignments = get().getVehicleAssignments();
 
-		const exists = selectedSpaces.find((item) => Number(item.parking_post_id) === Number(space.id));
-		if (exists) {
+		const targetIdx =
+			explicitCarIndex !== null && explicitCarIndex !== undefined
+				? Math.min(Math.max(0, Number(explicitCarIndex)), carSlots.length - 1)
+				: Math.min(Math.max(0, activeCarIndex), carSlots.length - 1);
+
+		const existingCarIdx = carSlots.findIndex((c) => Number(c.space?.parking_post_id) === postId);
+
+		// Clicking the slot already assigned to the active car deselects it (preserving license plate)
+		if (existingCarIdx === targetIdx) {
+			const nextCarSlots = carSlots.map((car, idx) =>
+				idx === targetIdx ? { ...car, space: null } : car
+			);
 			set({
-				selectedSpaces: selectedSpaces.filter((item) => Number(item.parking_post_id) !== Number(space.id)),
+				carSlots: nextCarSlots,
+				selectedSpaces: buildSelectedSpacesFromCarSlots(nextCarSlots),
+				slotConflicts: get().slotConflicts.filter((c) => c.carIndex !== targetIdx),
 			});
-			return;
+			return { changed: true, action: 'deselected', carIndex: targetIdx };
 		}
-		if (selectedSpaces.length >= totalVehicles) {
-			set({
-				modal: {
-					open: true,
-					type: 'error',
-					title: t('เลือกครบจำนวนรถแล้ว', 'Selection Limit Reached'),
-					message: t(
-						`คุณระบุจำนวนรถไว้ ${totalVehicles} คัน หากต้องการเลือกช่องเพิ่ม กรุณาเพิ่มจำนวนรถก่อน`,
-						`You selected ${totalVehicles} vehicle(s). Increase vehicle quantity to select more spaces.`
-					),
-				},
-			});
-			return;
+
+		// Prevent assigning the same Post ID to another car in the same booking
+		if (existingCarIdx !== -1 && existingCarIdx !== targetIdx) {
+			return { changed: false, action: 'taken_by_other_car', carIndex: existingCarIdx };
 		}
-		const nextIdx = selectedSpaces.length;
-		const assigned = assignments[nextIdx] || {};
+
+		const code = getSpaceCode(space);
+		const nextSpaceObj = {
+			id: space.id,
+			parking_post_id: space.id,
+			parking_id: space.parking_id || space.title || '',
+			title: code,
+		};
+
+		const nextCarSlots = carSlots.map((car, idx) =>
+			idx === targetIdx ? { ...car, space: nextSpaceObj } : car
+		);
+		const nextActive = findNextActiveCarIndex(nextCarSlots, targetIdx);
+
 		set({
-			selectedSpaces: [
-				...selectedSpaces,
-				{
-					id: space.id,
-					parking_post_id: space.id,
-					parking_id: space.parking_id || space.title || '',
-					title: space.title || space.parking_id || `Space #${space.id}`,
-					assignedVehicleType: assigned.type || vehicleTypes[0]?.id || '',
-					otherTypeCar: assigned.otherTypeCar || '',
-					licensePlate: savedPlates[nextIdx]?.tabienrod_number || '',
-				},
-			],
+			carSlots: nextCarSlots,
+			activeCarIndex: nextActive,
+			selectedSpaces: buildSelectedSpacesFromCarSlots(nextCarSlots),
+			slotConflicts: get().slotConflicts.filter((c) => c.carIndex !== targetIdx),
+		});
+		return { changed: true, action: 'selected', carIndex: targetIdx };
+	},
+
+	// Backward-compatible alias
+	toggleSpace: (space) => get().selectSpaceForCar(space),
+
+	updateCarLicensePlate: (carIndex, value) => {
+		set((state) => {
+			const nextCarSlots = state.carSlots.map((car, idx) =>
+				idx === carIndex ? { ...car, licensePlate: value } : car
+			);
+			return {
+				carSlots: nextCarSlots,
+				selectedSpaces: buildSelectedSpacesFromCarSlots(nextCarSlots),
+			};
 		});
 	},
 
+	// Backward-compatible field updater by spaceId
 	updateSpaceField: (spaceId, key, value) => {
-		set((state) => ({
-			selectedSpaces: state.selectedSpaces.map((item) =>
-				Number(item.parking_post_id) === Number(spaceId) ? { ...item, [key]: value } : item
-			),
-		}));
+		set((state) => {
+			const nextCarSlots = state.carSlots.map((car) =>
+				Number(car.space?.parking_post_id) === Number(spaceId) ? { ...car, [key]: value } : car
+			);
+			return {
+				carSlots: nextCarSlots,
+				selectedSpaces: buildSelectedSpacesFromCarSlots(nextCarSlots),
+			};
+		});
 	},
 
 	validateCoupon: async () => {
@@ -378,7 +564,7 @@ export const useCarparkStore = create((set, get) => ({
 	},
 
 	nextStep: async () => {
-		const { currentStep, selectedSpaces, profile } = get();
+		const { currentStep, carSlots, occupiedIds, profile } = get();
 		const totalVehicles = get().getTotalVehicles();
 
 		if (currentStep === 1) {
@@ -396,30 +582,60 @@ export const useCarparkStore = create((set, get) => ({
 				});
 				return;
 			}
-			const ok = await get().checkAvailability();
-			if (ok) {
-				set({ currentStep: 2 });
-			}
+			get().syncSelectedSpacesWithVehicles();
+			set({ currentStep: 2 });
+			await get().checkAvailability();
 			return;
 		}
+
 		if (currentStep === 2) {
-			if (selectedSpaces.length !== totalVehicles) {
+			const check = validateCarSlotsForStep2(carSlots, totalVehicles, occupiedIds);
+			if (!check.valid) {
+				if (check.reason === 'missing_plate') {
+					const carNum = (check.carIndex ?? 0) + 1;
+					set({
+						activeCarIndex: check.carIndex ?? 0,
+						modal: {
+							open: true,
+							type: 'error',
+							title: t('กรุณากรอกทะเบียนรถ', 'Enter License Plate'),
+							message: t(`กรุณากรอกทะเบียนรถสำหรับรถคันที่ ${carNum}`, `Please enter the license plate for Vehicle #${carNum}.`),
+						},
+					});
+					return;
+				}
+				const selectedCount = carSlots.filter((c) => Boolean(c.space)).length;
 				set({
 					modal: {
 						open: true,
 						type: 'error',
 						title: t('กรุณาเลือกช่องจอดให้ครบ', 'Select All Spaces'),
 						message: t(
-							`กรุณาเลือกช่องจอดให้ครบ ${totalVehicles} ช่อง (เลือกแล้ว ${selectedSpaces.length} ช่อง)`,
-							`Please select ${totalVehicles} parking space(s) (${selectedSpaces.length} selected).`
+							`กรุณาเลือกช่องจอดให้ครบ ${totalVehicles} ช่อง (เลือกแล้ว ${selectedCount} ช่อง)`,
+							`Please select ${totalVehicles} parking space(s) (${selectedCount} selected).`
 						),
 					},
 				});
 				return;
 			}
+
+			// Re-verify live availability before entering Step 3 to catch mid-booking conflicts
+			const ok = await get().checkAvailability();
+			if (!ok) {
+				return;
+			}
+			const afterState = get();
+			if (afterState.slotConflicts.length > 0) {
+				return;
+			}
+			const postCheck = validateCarSlotsForStep2(afterState.carSlots, totalVehicles, afterState.occupiedIds);
+			if (!postCheck.valid) {
+				return;
+			}
 			set({ currentStep: 3 });
 			return;
 		}
+
 		if (currentStep === 3) {
 			if (!profile.fullname.trim() || !profile.email.trim() || !profile.phone.trim()) {
 				set({
@@ -458,15 +674,17 @@ export const useCarparkStore = create((set, get) => ({
 			});
 			return;
 		}
-		if (state.selectedSpaces.length !== totalVehicles) {
+		const selectedSpaces = buildSelectedSpacesFromCarSlots(state.carSlots);
+		const validCheck = validateCarSlotsForStep2(state.carSlots, totalVehicles, state.occupiedIds);
+		if (!validCheck.valid || selectedSpaces.length !== totalVehicles) {
 			set({
 				modal: {
 					open: true,
 					type: 'error',
-					title: t('กรุณาเลือกช่องจอดให้ครบ', 'Select All Spaces'),
+					title: t('ข้อมูลช่องจอดหรือทะเบียนไม่ครบ', 'Incomplete Slot or Plate'),
 					message: t(
-						`กรุณาเลือกช่องจอดให้ครบ ${totalVehicles} ช่อง (เลือกแล้ว ${state.selectedSpaces.length} ช่อง)`,
-						`Please select ${totalVehicles} parking space(s) (${state.selectedSpaces.length} selected).`
+						`กรุณาเลือกช่องจอดให้ครบ ${totalVehicles} ช่องและกรอกทะเบียนรถทุกคัน`,
+						`Please select ${totalVehicles} parking space(s) and fill in all license plates.`
 					),
 				},
 			});
@@ -495,7 +713,7 @@ export const useCarparkStore = create((set, get) => ({
 					type: r.type === '1236' && r.otherTypeCar ? r.otherTypeCar : r.type,
 					quantity: Number(r.quantity) || 1,
 				})),
-				selectedParkingSpaces: state.selectedSpaces,
+				selectedParkingSpaces: selectedSpaces,
 				addon:
 					state.servicePickup || state.serviceValet
 						? {

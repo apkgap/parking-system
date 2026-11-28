@@ -371,6 +371,9 @@ function get_parking_space_data($request)
             $location_slug = !is_wp_error($location_terms) && !empty($location_terms) ? $location_terms[0]->slug : '';
             $location_id = !is_wp_error($location_terms) && !empty($location_terms) ? $location_terms[0]->term_id : '';
 
+            $raw_position = get_field('position');
+            $position_arr = is_array($raw_position) ? $raw_position : array();
+
             $data[] = array(
                 'id' => get_the_ID(),
                 'title' => get_the_title(),
@@ -381,8 +384,8 @@ function get_parking_space_data($request)
                     'slug' => $location_slug
                 ),
                 'position' => array(
-                    'x' => get_field('position')['position_x'] ?? null,
-                    'y' => get_field('position')['position_y'] ?? null,
+                    'x' => array_key_exists('position_x', $position_arr) ? $position_arr['position_x'] : null,
+                    'y' => array_key_exists('position_y', $position_arr) ? $position_arr['position_y'] : null,
                 ),
             );
         }

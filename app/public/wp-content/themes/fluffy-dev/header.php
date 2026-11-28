@@ -35,7 +35,6 @@ $user_initials      = $current_user ? strtoupper( mb_substr( (string) $current_u
 			<div id="fluffy-header-brand" class="fluffy-header__brand flex items-center">
 				<a id="fluffy-brand-link" class="fluffy-header__brand-name inline-flex items-center gap-2.5 text-lg font-bold tracking-tight text-[#0F172A] no-underline" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 					<img src="<?php echo esc_url( get_template_directory_uri() . '/customize/img/brand-logo.svg' ); ?>" alt="Parking System" class="h-8 w-8 rounded-lg">
-					<span>Parking System</span>
 				</a>
 			</div>
 

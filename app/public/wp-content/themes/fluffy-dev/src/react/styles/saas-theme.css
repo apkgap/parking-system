@@ -337,71 +337,1266 @@
 /* 4-Step Wizard Navigation */
 .fluffy-wizard-nav {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 8px;
-	background: #FFFFFF;
-	border: 1px solid var(--fluffy-border);
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	padding: 5px 8px 7px;
 	border-radius: var(--fluffy-radius);
-	padding: 8px;
-}
-
-@media (min-width: 640px) {
-	.fluffy-wizard-nav {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
+	background: var(--fluffy-card);
 }
 
 .fluffy-wizard-btn {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	width: 100%;
-	border: 1px solid transparent;
-	border-radius: var(--fluffy-radius-sm);
-	background: transparent;
-	padding: 9px 12px;
+	position: relative;
+	display: grid;
+	grid-template-rows: 28px auto;
+	place-items: center;
+	align-content: start;
+	gap: 6px;
+	min-width: 0;
+	padding: 4px;
+	color: var(--fluffy-text-secondary);
 	font-size: 13px;
 	font-weight: 600;
-	color: var(--fluffy-text-secondary);
-	text-align: left;
-	cursor: pointer;
-	transition: background-color 150ms ease, color 150ms ease;
+	text-align: center;
+}
+
+.fluffy-wizard-btn + .fluffy-wizard-btn::before {
+	position: absolute;
+	inset-block-start: 17px;
+	inset-inline-start: -50%;
+	width: 100%;
+	height: 2px;
+	background: var(--fluffy-border);
+	content: '';
+	pointer-events: none;
+}
+
+.fluffy-wizard-btn:is(.is-active, .is-completed)::before {
+	background: var(--fluffy-primary);
 }
 
 .fluffy-wizard-btn:disabled {
 	cursor: default;
 }
 
-.fluffy-wizard-btn.is-active {
-	background: var(--fluffy-primary);
-	color: #FFFFFF;
-}
-
-.fluffy-wizard-btn.is-completed {
-	background: var(--fluffy-primary-soft);
-	color: var(--fluffy-primary);
+.fluffy-wizard-btn:focus-visible {
+	z-index: 2;
+	outline: 2px solid var(--fluffy-primary-hover);
+	outline-offset: -2px;
+	border-radius: var(--fluffy-radius-sm);
 }
 
 .fluffy-wizard-btn__num {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 22px;
-	height: 22px;
-	flex-shrink: 0;
-	border-radius: 999px;
-	font-size: 11px;
+	position: relative;
+	z-index: 1;
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: #e9edf2;
+	color: #475569;
+	font-size: 12px;
 	font-weight: 700;
-	background: #E2E8F0;
-	color: var(--fluffy-text-secondary);
 }
 
 .fluffy-wizard-btn.is-active .fluffy-wizard-btn__num {
-	background: rgba(255, 255, 255, 0.22);
-	color: #FFFFFF;
+	background: var(--fluffy-primary);
+	color: #fff;
 }
 
 .fluffy-wizard-btn.is-completed .fluffy-wizard-btn__num {
+	background: var(--fluffy-primary-soft);
+	color: #086b8d;
+}
+
+.fluffy-wizard-btn__label {
+	padding: 0 2px 3px;
+	border-bottom: 2px solid transparent;
+}
+
+.fluffy-wizard-btn.is-active .fluffy-wizard-btn__label {
+	color: var(--fluffy-text);
+	font-weight: 700;
+}
+
+.fluffy-wizard-btn.is-completed .fluffy-wizard-btn__label {
+	color: #086b8d;
+}
+
+.fluffy-wizard-btn.is-completed:hover .fluffy-wizard-btn__label {
+	text-decoration: underline;
+}
+
+.fluffy-wizard-nav__summary {
+	display: none;
+}
+
+@media (max-width: 639px) {
+	.fluffy-wizard-nav {
+		padding-block: 3px 10px;
+	}
+
+	.fluffy-wizard-btn {
+		grid-template-rows: 1fr;
+		align-content: center;
+		min-height: 44px;
+	}
+
+	.fluffy-wizard-btn + .fluffy-wizard-btn::before {
+		inset-block-start: calc(50% - 1px);
+	}
+
+	.fluffy-wizard-btn__num {
+		width: 12px;
+		height: 12px;
+		background: #c9d3df;
+	}
+
+	.fluffy-wizard-btn__num > span,
+	.fluffy-wizard-btn__label {
+		display: none;
+	}
+
+	.fluffy-wizard-btn.is-completed .fluffy-wizard-btn__num {
+		width: 20px;
+		height: 20px;
+	}
+
+	.fluffy-wizard-btn.is-active .fluffy-wizard-btn__num {
+		outline: 3px solid var(--fluffy-primary-soft);
+	}
+
+	.fluffy-wizard-nav__summary {
+		display: block;
+		grid-column: 1 / -1;
+		margin: 0;
+		color: #475569;
+		font-size: 13px;
+		text-align: center;
+	}
+
+	.fluffy-wizard-nav__summary strong {
+		color: var(--fluffy-text);
+	}
+}
+
+/* ==========================================================================
+   Carpark Step 2: Select Parking Space (Desktop 1320px + Mobile Responsive)
+   ========================================================================== */
+.fluffy-carpark.fluffy-saas-shell {
+	--fluffy-carpark-column-gap: 24px;
+	--fluffy-carpark-sidebar-width: 340px;
+	--fluffy-bg: #fff;
+	--fluffy-border: #dae3ed;
+	--fluffy-radius: 14px;
+	min-height: 0;
+	padding: 22px 0 48px;
+}
+
+.fluffy-carpark .fluffy-carpark__header {
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 16px;
+	margin-bottom: 14px;
+	padding: 5px 0 9px;
+}
+
+.fluffy-carpark__header-icon {
+	flex: 0 0 auto;
+	width: 56px;
+	height: 56px;
+}
+
+.fluffy-carpark .fluffy-carpark__title {
+	font-size: clamp(23px, 2.25vw, 32px);
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.fluffy-carpark .fluffy-carpark__subtitle {
+	margin-top: 7px;
+}
+
+.fluffy-carpark .fluffy-carpark__wizard-nav {
+	width: 100%;
+	max-width: 600px;
+	margin-inline: auto;
+	margin-bottom: var(--fluffy-carpark-column-gap);
+}
+
+.fluffy-carpark__form {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--fluffy-carpark-column-gap);
+}
+
+.fluffy-carpark__main {
+	display: grid;
+	min-width: 0;
+	align-content: start;
+	gap: 16px;
+}
+
+.fluffy-carpark__sidebar {
+	min-width: 0;
+}
+
+.fluffy-carpark .fluffy-carpark__section,
+.fluffy-carpark .fluffy-carpark__summary {
+	padding: 18px;
+}
+
+.fluffy-carpark .fluffy-carpark__section,
+.fluffy-carpark .fluffy-carpark__summary {
+	border: 0;
+}
+
+.fluffy-carpark .fluffy-carpark__section-title {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin: 0 0 16px;
+	color: var(--fluffy-text);
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.fluffy-carpark__section-title svg {
+	flex-shrink: 0;
+	color: #086b8d;
+}
+
+.fluffy-carpark__vehicle-heading {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 14px;
+}
+
+.fluffy-carpark .fluffy-carpark__vehicle-heading .fluffy-carpark__section-title {
+	margin-bottom: 2px;
+}
+
+.fluffy-carpark__vehicle-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 8px 12px;
+}
+
+.fluffy-carpark__vehicle-type {
+	min-width: 0;
+}
+
+.fluffy-carpark__vehicle-other {
+	grid-column: 1 / -1;
+}
+
+.fluffy-carpark__quantity {
+	display: grid;
+	grid-template-columns: 44px 44px 44px;
+	align-items: center;
+	background: #f1f5f9;
+	border-radius: var(--fluffy-radius-sm);
+}
+
+.fluffy-carpark__quantity button {
+	display: grid;
+	place-items: center;
+	min-height: 44px;
+	border-radius: var(--fluffy-radius-sm);
+	color: #086b8d;
+}
+
+.fluffy-carpark__quantity button:hover:not(:disabled) {
+	background: var(--fluffy-primary-soft);
+}
+
+.fluffy-carpark__quantity button:disabled {
+	color: #64748b;
+	cursor: default;
+}
+
+.fluffy-carpark .fluffy-carpark__quantity .fluffy-carpark__quantity-input {
+	appearance: textfield;
+	padding-inline: 2px;
+	background: transparent;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+
+.fluffy-carpark__quantity-input::-webkit-inner-spin-button,
+.fluffy-carpark__quantity-input::-webkit-outer-spin-button {
+	appearance: none;
+	margin: 0;
+}
+
+.fluffy-carpark__vehicle-remove {
+	min-height: 44px;
+	padding-inline: 8px;
+	color: #b91c1c;
+	font-size: 13px;
+}
+
+.fluffy-carpark__addon-option {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 48px;
+	padding: 7px 10px;
+	border-radius: var(--fluffy-radius-sm);
+	cursor: pointer;
+}
+
+.fluffy-carpark__addon-option input {
+	flex-shrink: 0;
+}
+
+.fluffy-carpark__addon-option:is(:hover, :has(input:checked)) {
+	background: var(--fluffy-primary-soft);
+}
+
+@media (max-width: 639px) {
+	.fluffy-carpark__vehicle-row {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	.fluffy-carpark__vehicle-type {
+		grid-column: 1 / -1;
+	}
+
+	.fluffy-carpark__vehicle-remove {
+		justify-self: end;
+	}
+}
+
+.fluffy-carpark .fluffy-saas-input,
+.fluffy-carpark .fluffy-saas-select,
+.fluffy-carpark .fluffy-datepicker__trigger,
+.fluffy-carpark .fluffy-timepicker__trigger {
+	min-height: 44px;
+}
+
+.fluffy-carpark :is(.fluffy-saas-input, .fluffy-saas-select, .fluffy-datepicker__trigger, .fluffy-timepicker__trigger, .fluffy-saas-btn-secondary) {
+	border: 0;
+	background: #f1f5f9;
+}
+
+.fluffy-carpark :is(.fluffy-saas-input, .fluffy-saas-select, .fluffy-datepicker__trigger, .fluffy-timepicker__trigger):focus {
+	outline: 2px solid var(--fluffy-primary-hover);
+	outline-offset: -2px;
+	box-shadow: none;
+}
+
+.fluffy-carpark :is(.fluffy-datepicker__popover, .fluffy-timepicker__popover) {
+	box-shadow: none;
+}
+
+.fluffy-carpark input[type='checkbox'] {
+	accent-color: var(--fluffy-primary);
+}
+
+.fluffy-carpark .fluffy-saas-btn-primary {
+	color: #fff;
+}
+
+.fluffy-carpark__summary-lines {
+	display: grid;
+	gap: 10px;
+	color: #475569;
+	font-size: 14px;
+}
+
+.fluffy-carpark__summary-total {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 4px 10px;
+	margin-top: 4px;
+	padding: 12px;
+	border-radius: var(--fluffy-radius-sm);
+	background: var(--fluffy-primary-soft);
+	color: var(--fluffy-text);
+	font-weight: 700;
+}
+
+.fluffy-carpark__summary-price {
+	color: #075c78;
+	font-size: 20px;
+}
+
+.fluffy-carpark__coupon {
+	display: flex;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.fluffy-carpark__coupon input {
+	min-width: 0;
+}
+
+@media (min-width: 1024px) {
+	.fluffy-carpark__form {
+		grid-template-columns: minmax(0, 1fr) var(--fluffy-carpark-sidebar-width);
+	}
+
+	.fluffy-carpark__summary {
+		position: sticky;
+		top: 80px;
+	}
+}
+
+@media (max-width: 1023px) {
+	.fluffy-carpark.fluffy-saas-shell {
+		--fluffy-carpark-column-gap: 16px;
+		padding: 16px 0 40px;
+	}
+
+	.fluffy-carpark .fluffy-carpark__section,
+	.fluffy-carpark .fluffy-carpark__summary {
+		padding: 16px;
+	}
+}
+
+@media (max-width: 639px) {
+	.fluffy-carpark .fluffy-carpark__header {
+		align-items: flex-start;
+		gap: 10px;
+	}
+
+	.fluffy-carpark__header-icon {
+		width: 40px;
+		height: 40px;
+	}
+}
+
+.fluffy-step2 {
+	--fluffy-step2-navy: #0f2d52;
+	--fluffy-step2-blue: var(--fluffy-primary);
+	--fluffy-step2-pale: var(--fluffy-primary-soft);
+	--fluffy-step2-border: #cbd6e7;
+	--fluffy-step2-free: #c3e8ce;
+	--fluffy-step2-taken: #d2d7df;
+	color: #0f172a;
+}
+
+.fluffy-step2 h1,
+.fluffy-step2 h2,
+.fluffy-step2 h3,
+.fluffy-step2 p {
+	margin: 0;
+}
+
+.fluffy-step2 button:focus-visible,
+.fluffy-step2 summary:focus-visible,
+.fluffy-step2__map-scroll:focus-visible {
+	outline: 2px solid var(--fluffy-step2-blue);
+	outline-offset: 2px;
+}
+
+.fluffy-step2__header-top,
+.fluffy-step2__context-bar,
+.fluffy-step2__schedule,
+.fluffy-step2__toolbar,
+.fluffy-step2__legend,
+.fluffy-step2__legend > span,
+.fluffy-step2__car-actions,
+.fluffy-step2__desktop-actions {
+	display: flex;
+	align-items: center;
+}
+
+.fluffy-step2__header-top {
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.fluffy-step2 .fluffy-step2__title {
+	font-size: clamp(22px, 2vw, 27px);
+	font-weight: 600;
+	line-height: 1.15;
+	color: var(--fluffy-step2-navy);
+}
+
+.fluffy-step2__header-back,
+.fluffy-step2__mobile-progress {
+	display: none;
+}
+
+.fluffy-step2__context-bar {
+	gap: 18px;
+	padding: 9px 14px;
+	border-radius: 12px;
+	background: #eef4fb;
+	font-size: 16px;
+}
+
+.fluffy-step2__schedule {
+	flex: 1;
+	gap: 15px;
+	min-width: 0;
+}
+
+.fluffy-step2__calendar {
+	flex: 0 0 auto;
+	color: var(--fluffy-step2-navy);
+}
+
+.fluffy-step2__dates {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 24px;
+	font-weight: 600;
+}
+
+.fluffy-step2__dates span {
+	white-space: nowrap;
+}
+
+.fluffy-step2__airport {
+	font-size: 13px;
+	color: #475569;
+}
+
+.fluffy-step2__progress {
+	flex: 0 0 30%;
+	padding: 5px 8px;
+	border-inline-start: 1px solid #97aac6;
+	text-align: center;
+	font-size: 19px;
+}
+
+.fluffy-step2__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) var(--fluffy-carpark-sidebar-width);
+	gap: var(--fluffy-carpark-column-gap);
+	margin-top: 30px;
+}
+
+.fluffy-step2__main-card {
+	min-width: 0;
+}
+
+.fluffy-step2__toolbar {
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 18px;
+}
+
+.fluffy-step2__lot-heading h2 {
+	color: var(--fluffy-step2-navy);
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.fluffy-step2__lot-heading p {
+	margin-top: 4px;
+	color: #475569;
+	font-size: 13px;
+}
+
+.fluffy-step2__view-switch {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 4px;
+	flex: 0 0 208px;
+	padding: 4px;
+	border-radius: 10px;
+	background: #eef3f8;
+}
+
+.fluffy-step2__view-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	min-height: 44px;
+	padding: 4px 8px;
+	border-radius: 7px;
+	color: #475569;
+	font-size: 14px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.fluffy-step2__view-btn:not([aria-pressed='true']):hover {
+	background: #fff;
+	color: var(--fluffy-step2-navy);
+}
+
+.fluffy-step2__view-btn[aria-pressed='true'] {
 	background: var(--fluffy-primary);
-	color: #FFFFFF;
+	color: #fff;
+}
+
+.fluffy-step2__map-frame {
+	overflow: hidden;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.fluffy-step2__area-links {
+	display: flex;
+	overflow-x: auto;
+	gap: 3px;
+	margin-bottom: 10px;
+}
+
+.fluffy-step2__area-links button {
+	min-height: 44px;
+	padding: 6px 16px;
+	border-radius: 9px 9px 0 0;
+	background: #eef3f9;
+	white-space: nowrap;
+	color: var(--fluffy-step2-navy);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.fluffy-step2__area-links button[aria-pressed='true'] {
+	background: var(--fluffy-primary);
+	color: #fff;
+}
+
+.fluffy-step2__area-links button:focus-visible {
+	outline-offset: -3px;
+}
+
+.fluffy-step2__area-links button:not([aria-pressed='true']):hover {
+	background: var(--fluffy-step2-pale);
+}
+
+.fluffy-step2 .fluffy-step2__map-hint {
+	display: none;
+	padding: 8px 12px;
+	color: #475569;
+	font-size: 12px;
+}
+
+.fluffy-step2__map-scroll {
+	overflow: auto;
+	--fluffy-step2-space-width: 30px;
+	block-size: 385px;
+	scrollbar-gutter: stable;
+	background: #edf1f6;
+}
+
+.fluffy-step2__map-rows {
+	display: grid;
+	gap: 14px;
+	align-content: start;
+	inline-size: max(100%, calc(110px + var(--fluffy-step2-columns) * var(--fluffy-step2-space-width)));
+	padding: 0 10px 10px;
+}
+
+.fluffy-step2 .fluffy-step2__area-heading {
+	position: sticky;
+	inset-inline-start: 0;
+	width: fit-content;
+	padding: 10px 4px;
+	scroll-margin-top: 4px;
+	color: var(--fluffy-step2-navy);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.fluffy-step2__lot-ground {
+	overflow: clip;
+	border-radius: 10px;
+	background: #acd69c;
+}
+
+.fluffy-step2__lot-road {
+	padding: 28px 32px 10px 20px;
+	border: 3px solid #f8fafc;
+	border-radius: 54px 22px 48px 36px;
+	background: #b5beca;
+}
+
+.fluffy-step2__drive-aisle {
+	height: 58px;
+	margin-inline-start: 50px;
+	background: repeating-linear-gradient(90deg, #f8fafc 0 24px, transparent 24px 48px) center / 100% 3px no-repeat;
+}
+
+.fluffy-step2__drive-aisle--outer {
+	height: 36px;
+}
+
+.fluffy-step2__row-cells {
+	display: grid;
+	grid-template-columns: 32px repeat(var(--fluffy-step2-columns), minmax(0, 1fr));
+}
+
+.fluffy-step2__row-label {
+	position: sticky;
+	inset-inline-start: 0;
+	z-index: 2;
+	display: grid;
+	place-items: center;
+	align-self: stretch;
+	background: #b5beca;
+	color: var(--fluffy-step2-navy);
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.fluffy-step2__map-scroll > .fluffy-step2__code-grid {
+	padding: 12px;
+}
+
+#fluffy-step2-full-lot {
+	margin-bottom: 12px;
+}
+
+.fluffy-step2__empty-row {
+	min-height: 28px;
+}
+
+.fluffy-step2__code-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+	gap: 4px;
+}
+
+.fluffy-step2__slot {
+	display: grid;
+	grid-template-rows: 1fr 18px 1fr;
+	justify-items: center;
+	align-items: center;
+	min-height: 88px;
+	padding: 4px 2px;
+	border: 2px solid #f8fafc;
+	border-radius: 4px;
+	color: #143424;
+	font-weight: 600;
+	line-height: 1.15;
+}
+
+.fluffy-step2__row-cells .fluffy-step2__slot {
+	border-inline-end: 0;
+	border-block: 2px solid #f8fafc;
+	border-radius: 0;
+	padding-block-start: 1px;
+}
+
+.fluffy-step2__row-cells .fluffy-step2__slot:is(:first-of-type, .fluffy-step2__slot-gap + button) {
+	border-start-start-radius: 8px;
+	border-end-start-radius: 8px;
+}
+
+.fluffy-step2__row-cells .fluffy-step2__slot:is(:last-child, :has(+ .fluffy-step2__slot-gap)) {
+	border-inline-end: 2px solid #f8fafc;
+	border-start-end-radius: 8px;
+	border-end-end-radius: 8px;
+}
+
+.fluffy-step2__slot-code {
+	grid-row: 2;
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+}
+
+.fluffy-step2__slot > :not(.fluffy-step2__slot-code) {
+	grid-row: 3;
+	align-self: start;
+}
+
+.fluffy-step2__slot.is-available,
+.fluffy-step2__legend-swatch.is-available {
+	background: #a6dfad;
+}
+
+.fluffy-step2__list-icon,
+.fluffy-step2__slot.is-available:hover {
+	background: var(--fluffy-step2-free);
+}
+
+.fluffy-step2__slot:focus-visible {
+	position: relative;
+	z-index: 1;
+}
+
+.fluffy-step2__slot.is-occupied,
+.fluffy-step2__legend-swatch.is-occupied {
+	background: var(--fluffy-step2-taken);
+	color: #445063;
+}
+
+.fluffy-step2__slot.is-selected-active,
+.fluffy-step2__legend-swatch.is-selected-active,
+.fluffy-step2__list-row.is-selected-active .fluffy-step2__list-indicator {
+	background: var(--fluffy-step2-blue);
+	color: #fff;
+}
+
+.fluffy-step2__slot.is-selected-other,
+.fluffy-step2__legend-swatch.is-selected-other {
+	background: var(--fluffy-step2-pale);
+	color: var(--fluffy-step2-navy);
+}
+
+.fluffy-step2__slot-car-tag {
+	display: grid;
+	place-items: center;
+	min-width: 17px;
+	height: 17px;
+	padding-inline: 3px;
+	border-radius: 4px;
+	background: #fff;
+	color: var(--fluffy-step2-navy);
+	font-size: 11px;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.fluffy-step2__legend {
+	flex-wrap: wrap;
+	gap: 8px 18px;
+	padding: 12px 14px;
+	font-size: 14px;
+}
+
+.fluffy-step2__legend > span {
+	gap: 8px;
+}
+
+.fluffy-step2__legend-swatch {
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 21px;
+	border-radius: 5px;
+	font-style: normal;
+}
+
+.fluffy-step2__unpositioned,
+.fluffy-step2__empty-state,
+.fluffy-step2__alert {
+	padding: 16px;
+}
+
+.fluffy-step2__empty-state,
+.fluffy-step2__alert {
+	border-radius: 10px;
+	background: #fff;
+}
+
+.fluffy-step2__alert {
+	margin-bottom: 14px;
+	border-color: #f3d398;
+	background: #fffbeb;
+}
+
+.fluffy-step2 .fluffy-step2__list-title {
+	margin-bottom: 12px;
+	color: var(--fluffy-step2-navy);
+	font-size: 22px;
+	font-weight: 600;
+}
+
+.fluffy-step2__list-items {
+	display: grid;
+	gap: 8px;
+	block-size: min(48vh, 464px);
+	align-content: start;
+	scrollbar-gutter: stable;
+	overflow-y: auto;
+	padding: 2px;
+}
+
+.fluffy-step2__list-row {
+	display: grid;
+	grid-template-columns: 36px minmax(46px, auto) 1fr 24px;
+	align-items: center;
+	gap: 10px;
+	min-height: 60px;
+	padding: 8px 12px;
+	border-radius: 11px;
+	background: #fff;
+	text-align: start;
+}
+
+.fluffy-step2__list-row.is-selected-active {
+	background: var(--fluffy-step2-pale);
+}
+
+.fluffy-step2__list-icon,
+.fluffy-step2__list-indicator {
+	display: grid;
+	place-items: center;
+	font-weight: 600;
+}
+
+.fluffy-step2__list-icon {
+	height: 34px;
+	border-radius: 7px;
+}
+
+.fluffy-step2__list-code {
+	color: var(--fluffy-step2-navy);
+	font-size: 22px;
+}
+
+.fluffy-step2__list-status {
+	font-size: 14px;
+}
+
+.fluffy-step2__list-indicator {
+	width: 24px;
+	height: 24px;
+	border: 2px solid #a3b3cc;
+	border-radius: 50%;
+}
+
+.fluffy-step2__list-row.is-selected-active .fluffy-step2__list-indicator {
+	border-color: transparent;
+}
+
+.fluffy-step2__vehicles-panel,
+.fluffy-step2__vehicles-card {
+	min-width: 0;
+}
+
+.fluffy-step2__vehicles-card {
+	--fluffy-step2-sidebar-padding: 8px;
+	height: 100%;
+	overflow: hidden;
+	border-radius: 14px;
+	background: #fff;
+}
+
+.fluffy-step2__vehicles-heading {
+	padding: 10px var(--fluffy-step2-sidebar-padding);
+	background: var(--fluffy-primary);
+	color: #fff;
+	font-size: 22px;
+	font-weight: 600;
+}
+
+.fluffy-step2__car-list {
+	display: grid;
+	align-content: start;
+	gap: 6px;
+	max-height: min(385px, 48vh);
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: #648399 #edf2f6;
+	scrollbar-gutter: stable both-edges;
+	padding: 8px var(--fluffy-step2-sidebar-padding);
+}
+
+.fluffy-step2__car-card {
+	min-width: 0;
+}
+
+.fluffy-step2__car-heading button {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	min-height: 44px;
+	padding: 7px 10px;
+	border-radius: 8px;
+	background: #f1f5f9;
+	color: var(--fluffy-step2-navy);
+	font-size: 14px;
+	font-weight: 600;
+	text-align: start;
+}
+
+.fluffy-step2__car-heading button[aria-expanded='true'] {
+	background: var(--fluffy-step2-pale);
+}
+
+.fluffy-step2__car-heading button > span {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	gap: 6px;
+}
+
+.fluffy-step2__car-heading strong {
+	padding: 2px 6px;
+	border-radius: 5px;
+	background: #fff;
+	font-size: 13px;
+}
+
+.fluffy-step2__car-chevron {
+	flex-shrink: 0;
+}
+
+.fluffy-step2__car-heading button[aria-expanded='true'] .fluffy-step2__car-chevron {
+	transform: rotate(180deg);
+}
+
+.fluffy-step2__car-details {
+	padding: 8px 0 4px;
+}
+
+.fluffy-step2 .fluffy-step2__car-type {
+	color: #475569;
+	font-size: 13px;
+}
+
+.fluffy-step2__text-button,
+.fluffy-step2__next {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+}
+
+.fluffy-step2__unassigned {
+	display: grid;
+	place-content: center;
+	width: 100%;
+	min-height: 78px;
+	margin-top: 10px;
+	background: #f1f5f9;
+	border-radius: 10px;
+	color: #475569;
+}
+
+.fluffy-step2__unassigned small {
+	margin-top: 2px;
+	color: var(--fluffy-step2-navy);
+	font-weight: 700;
+}
+
+.fluffy-step2__car-actions {
+	flex-wrap: wrap;
+	gap: 4px 12px;
+	margin-top: 4px;
+}
+
+.fluffy-step2__text-button {
+	min-height: 36px;
+	color: #17467d;
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.fluffy-step2__text-button:hover {
+	text-decoration: underline;
+}
+
+.fluffy-step2__desktop-actions {
+	flex-direction: column-reverse;
+	gap: 4px;
+	margin-top: auto;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+	scrollbar-gutter: stable both-edges;
+	padding: 8px var(--fluffy-step2-sidebar-padding) 12px;
+}
+
+.fluffy-step2__next {
+	min-height: 48px;
+	padding: 8px 16px;
+	border-radius: 10px;
+	background: var(--fluffy-primary);
+	color: #fff;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.fluffy-step2__desktop-actions .fluffy-step2__next {
+	width: 100%;
+}
+
+.fluffy-step2__next:disabled {
+	background: #a8b2c4;
+	cursor: not-allowed;
+}
+
+.fluffy-step2__mobile-bar {
+	display: none;
+}
+
+.fluffy-step2__sheet {
+	position: fixed;
+	inset: auto 0 0;
+	width: 100%;
+	max-width: none;
+	max-height: min(80dvh, 520px);
+	overflow-y: auto;
+	margin: 0;
+	padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+	border: 0;
+	border-radius: 16px 16px 0 0;
+	background: #fff;
+	color: var(--fluffy-step2-navy);
+}
+
+.fluffy-step2__sheet::backdrop {
+	background: #0f172a7a;
+}
+
+.fluffy-step2__sheet h2 {
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.fluffy-step2__sheet-close {
+	display: grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: #eef4fb;
+}
+
+@media (min-width: 1024px) {
+	.fluffy-step2__vehicles-card[open] {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.fluffy-step2__vehicles-heading {
+		display: block;
+	}
+}
+
+@media (min-width: 1024px) and (max-width: 1199px) {
+	.fluffy-carpark.fluffy-saas-shell {
+		--fluffy-carpark-sidebar-width: 300px;
+		--fluffy-carpark-column-gap: 16px;
+	}
+}
+
+@media (max-width: 1023px) {
+	.fluffy-carpark.fluffy-saas-shell.is-step2 {
+		padding: 16px 0 calc(122px + env(safe-area-inset-bottom, 0px));
+	}
+
+	.fluffy-step2__header-top {
+		position: relative;
+		flex-direction: column;
+		gap: 9px;
+		margin-bottom: 16px;
+		padding-inline: 44px;
+		text-align: center;
+	}
+
+	.fluffy-step2__header-back {
+		position: absolute;
+		left: 0;
+		top: -5px;
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		color: var(--fluffy-step2-navy);
+		font-size: 25px;
+	}
+
+	.fluffy-step2 .fluffy-step2__title {
+		font-size: clamp(24px, 6.1vw, 29px);
+	}
+
+	.fluffy-step2__context-bar {
+		padding: 10px 14px;
+		font-size: 14px;
+	}
+
+	.fluffy-step2__dates {
+		display: grid;
+		gap: 2px;
+	}
+
+	.fluffy-step2__progress {
+		display: none;
+	}
+
+	.fluffy-step2__mobile-progress {
+		display: grid;
+		gap: 2px;
+		margin-top: 10px;
+		color: var(--fluffy-step2-navy);
+		text-align: center;
+	}
+
+	.fluffy-step2__mobile-progress small {
+		color: #475569;
+		font-size: 12px;
+	}
+
+	.fluffy-step2__list-items {
+		block-size: min(39vh, 330px);
+	}
+
+	.fluffy-step2__layout {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 22px;
+		margin-top: 20px;
+	}
+
+	.fluffy-step2__toolbar {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 12px;
+	}
+
+	.fluffy-step2__view-switch {
+		flex: auto;
+	}
+
+	.fluffy-step2__map-scroll {
+		--fluffy-step2-space-width: 44px;
+	}
+
+	.fluffy-step2__desktop-actions {
+		display: none;
+	}
+
+	.fluffy-step2__vehicles-heading {
+		font-size: 17px;
+	}
+
+	.fluffy-step2__text-button {
+		min-height: 44px;
+	}
+
+	.fluffy-step2__mobile-bar {
+		position: fixed;
+		inset: auto 0 0;
+		z-index: 40;
+		display: grid;
+		grid-template-columns: 1fr minmax(114px, 40%);
+		align-items: center;
+		gap: 12px;
+		padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+		background: #fff;
+		color: var(--fluffy-step2-navy);
+		font-size: 14px;
+	}
+
+	.fluffy-step2__mobile-bar small {
+		display: block;
+		color: #475569;
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 1279px) {
+	.fluffy-step2 .fluffy-step2__map-hint {
+		display: block;
+	}
+}
+
+@media (min-width: 1024px) {
+	.fluffy-step2__vehicles-panel {
+		align-self: start;
+	}
+
+	.fluffy-step2__list-items {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }

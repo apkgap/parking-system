@@ -1,44 +1,23 @@
+import {
+	RiAddLine,
+	RiArrowLeftLine,
+	RiArrowRightLine,
+	RiCalendarLine,
+	RiCarLine,
+	RiCheckLine,
+	RiFileList3Line,
+	RiServiceLine,
+	RiSubtractLine,
+	RiUserLine,
+} from '@remixicon/react';
 import { useEffect, useMemo } from '@wordpress/element';
 import { getConfig } from '../shared/api';
 import { t } from '../shared/i18n';
 import StatusModal from '../shared/StatusModal';
-import { ParkingMapSkeleton } from '../shared/Skeleton';
 import DatePickerField from '../shared/DatePickerField';
 import TimePickerField from '../shared/TimePickerField';
+import ParkingStep2 from './ParkingStep2';
 import { useCarparkStore } from './useCarparkStore';
-
-function getSpaceColorClass(space, isOccupied, isSelected, viewMode) {
-	if (!space) {
-		return 'bg-slate-100 border border-dashed border-slate-200 text-slate-400 cursor-default';
-	}
-	if (isOccupied) {
-		return 'bg-red-500 text-white border border-red-600 cursor-not-allowed opacity-90';
-	}
-	if (isSelected) {
-		return 'bg-[var(--fluffy-primary)] text-white border border-[var(--fluffy-primary-hover)] ring-2 ring-[var(--fluffy-primary)]/30 shadow-sm';
-	}
-	if (viewMode === 'distance') {
-		const y = Number(space.position?.y || 0);
-		if (y <= 2) {
-			return 'bg-blue-500 hover:bg-blue-600 text-white border border-blue-600';
-		}
-		if (y <= 4) {
-			return 'bg-amber-500 hover:bg-amber-600 text-white border border-amber-600';
-		}
-		return 'bg-orange-500 hover:bg-orange-600 text-white border border-orange-600';
-	}
-	if (viewMode === 'zone') {
-		const prefix = String(space.title || '').charAt(0).toUpperCase();
-		if (prefix === 'A' || prefix === 'B') {
-			return 'bg-purple-500 hover:bg-purple-600 text-white border border-purple-600';
-		}
-		if (prefix === 'C' || prefix === 'D') {
-			return 'bg-indigo-500 hover:bg-indigo-600 text-white border border-indigo-600';
-		}
-		return 'bg-teal-500 hover:bg-teal-600 text-white border border-teal-600';
-	}
-	return 'bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-600';
-}
 
 export default function CarparkBooking() {
 	const config = getConfig();
@@ -52,13 +31,8 @@ export default function CarparkBooking() {
 		location,
 		vehicleTypes,
 		vehicleRows,
-		spaces,
 		blackouts,
-		occupiedIds,
-		savedPlates,
 		selectedSpaces,
-		viewMode,
-		hasChecked,
 		conditionError,
 		servicePickup,
 		serviceValet,
@@ -81,11 +55,9 @@ export default function CarparkBooking() {
 		loadMasterData,
 		checkAvailability,
 		calculatePrice,
-		toggleSpace,
 		updateVehicleRow,
 		addVehicleRow,
 		removeVehicleRow,
-		updateSpaceField,
 		validateCoupon: handleValidateCoupon,
 		nextStep: handleNextStep,
 		submitBooking,
@@ -96,7 +68,6 @@ export default function CarparkBooking() {
 	const setEndDate = (v) => setField('endDate', v);
 	const setEndTime = (v) => setField('endTime', v);
 	const setLocation = (v) => setField('location', v);
-	const setViewMode = (v) => setField('viewMode', v);
 	const setServicePickup = (v) => setField('servicePickup', v);
 	const setServiceValet = (v) => setField('serviceValet', v);
 	const setCouponCode = (v) => setField('couponCode', v);
@@ -126,82 +97,6 @@ export default function CarparkBooking() {
 		calculatePrice();
 	}, [startDate, endDate, startTime, endTime, vehicleRows, totalVehicles, calculatePrice]);
 
-	const filteredSpaces = useMemo(() => {
-		const normalize = (val) => String(val || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-		const target = normalize(location).replace('airport', '');
-		return spaces.filter((s) => {
-			if (!target) {
-				return true;
-			}
-			const locNorm = normalize(s?.location?.slug || s?.location?.name || '');
-			if (!locNorm) {
-				return true;
-			}
-			return locNorm.includes(target);
-		});
-	}, [spaces, location]);
-
-	const gridLayout = useMemo(() => {
-		const coords = filteredSpaces.filter(
-			(s) => s.position && s.position.x !== null && s.position.x !== '' && s.position.y !== null && s.position.y !== ''
-		);
-		if (coords.length === 0) {
-			return { hasCoords: false, cols: 0, matrix: [] };
-		}
-		const maxX = Math.max(...coords.map((s) => Number(s.position.x)));
-		const maxY = Math.max(...coords.map((s) => Number(s.position.y)));
-		const minX = Math.min(...coords.map((s) => Number(s.position.x)));
-		const minY = Math.min(...coords.map((s) => Number(s.position.y)));
-
-		const rows = [];
-		for (let y = minY; y <= maxY; y++) {
-			const row = [];
-			for (let x = minX; x <= maxX; x++) {
-				const found = coords.find((s) => Number(s.position.x) === x && Number(s.position.y) === y) || null;
-				row.push({ x, y, space: found });
-			}
-			rows.push(row);
-		}
-		return { hasCoords: true, cols: maxX - minX + 1, matrix: rows };
-	}, [filteredSpaces]);
-
-	const stats = useMemo(() => {
-		const total = filteredSpaces.length;
-		const occupied = filteredSpaces.filter((s) => occupiedIds.includes(Number(s.id))).length;
-		const available = Math.max(0, total - occupied);
-		const rate = total > 0 ? ((occupied / total) * 100).toFixed(1) : '0.0';
-		return { total, available, occupied, rate };
-	}, [filteredSpaces, occupiedIds]);
-
-	const legendItems = useMemo(() => {
-		if (viewMode === 'distance') {
-			return [
-				{ color: 'bg-blue-500', text: t('ใกล้ทางเข้า', 'Near entrance') },
-				{ color: 'bg-amber-500', text: t('ระยะปานกลาง', 'Medium distance') },
-				{ color: 'bg-orange-500', text: t('ไกลจากทางเข้า', 'Far from entrance') },
-				{ color: 'bg-[var(--fluffy-primary)]', text: t('ช่องจอดที่เลือก', 'Selected') },
-				{ color: 'bg-red-500', text: t('ใช้งานแล้ว', 'Occupied') },
-				{ color: 'bg-slate-100 border border-dashed border-slate-300', text: t('ทางเดิน', 'Walkway') },
-			];
-		}
-		if (viewMode === 'zone') {
-			return [
-				{ color: 'bg-purple-500', text: t('โซน A-B', 'Zone A-B') },
-				{ color: 'bg-indigo-500', text: t('โซน C-D', 'Zone C-D') },
-				{ color: 'bg-teal-500', text: t('โซนอื่นๆ', 'Other Zones') },
-				{ color: 'bg-[var(--fluffy-primary)]', text: t('ช่องจอดที่เลือก', 'Selected') },
-				{ color: 'bg-red-500', text: t('ใช้งานแล้ว', 'Occupied') },
-				{ color: 'bg-slate-100 border border-dashed border-slate-300', text: t('ทางเดิน', 'Walkway') },
-			];
-		}
-		return [
-			{ color: 'bg-emerald-500', text: t('ช่องจอดว่าง', 'Available') },
-			{ color: 'bg-red-500', text: t('ใช้งานแล้ว', 'Occupied') },
-			{ color: 'bg-[var(--fluffy-primary)]', text: t('ช่องจอดที่เลือก', 'Selected') },
-			{ color: 'bg-slate-100 border border-dashed border-slate-300', text: t('ทางเดิน', 'Walkway') },
-		];
-	}, [viewMode]);
-
 	const finalTotal = Math.max(0, pricing.total_price - discount);
 
 	const wizardSteps = [
@@ -216,54 +111,73 @@ export default function CarparkBooking() {
 		submitBooking();
 	};
 
+	const activeStepLabel = wizardSteps[currentStep - 1]?.label;
+
+	const wizardNavigation = (
+		<nav id="fluffy-carpark-wizard-nav" className="fluffy-carpark__wizard-nav fluffy-wizard-nav" aria-label={t('ขั้นตอนการจอง', 'Booking steps')}>
+			{wizardSteps.map((step) => {
+				const isActive = currentStep === step.id;
+				const isCompleted = currentStep > step.id;
+				return (
+					<button
+						id={`fluffy-wizard-step-${step.id}`}
+						className={`fluffy-carpark__wizard-btn fluffy-wizard-btn ${
+							isActive ? 'is-active' : isCompleted ? 'is-completed' : ''
+						}`}
+						type="button"
+						key={step.id}
+						disabled={!isCompleted}
+						aria-label={step.label}
+						aria-current={isActive ? 'step' : undefined}
+						onClick={() => {
+							if (step.id < currentStep) {
+								setCurrentStep(step.id);
+							}
+						}}
+					>
+						<span className="fluffy-wizard-btn__num">
+							{isCompleted ? <RiCheckLine size={16} aria-hidden="true" /> : <span>{step.id}</span>}
+						</span>
+						<span className="fluffy-wizard-btn__label">{step.label}</span>
+					</button>
+				);
+			})}
+			<p className="fluffy-wizard-nav__summary" aria-hidden="true">
+				{t(
+					`ขั้นที่ ${currentStep} จาก ${wizardSteps.length}`,
+					`Step ${currentStep} of ${wizardSteps.length}`
+				)} <span>·</span> <strong>{activeStepLabel}</strong>
+			</p>
+		</nav>
+	);
+
 	return (
-		<div id="fluffy-carpark-app" className="fluffy-carpark fluffy-saas-shell">
-			<div id="fluffy-carpark-container" className="fluffy-carpark__container fluffy-saas-container">
-				<div id="fluffy-carpark-header" className="fluffy-carpark__header fluffy-saas-header">
+		<div id="fluffy-carpark-app" className={`fluffy-carpark fluffy-saas-shell ${currentStep === 2 ? 'is-step2' : ''}`}>
+			<div id="fluffy-carpark-container" className="fluffy-carpark__container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				<header id="fluffy-carpark-header" className="fluffy-carpark__header fluffy-saas-header">
+					{config.brandLogoUrl && (
+						<img className="fluffy-carpark__header-icon" src={config.brandLogoUrl} alt="" width={56} height={56} />
+					)}
 					<div>
 						<h1 className="fluffy-carpark__title fluffy-saas-title">{t('จองที่จอดรถสนามบิน', 'Airport Parking Reservation')}</h1>
 						<p className="fluffy-carpark__subtitle fluffy-saas-subtitle">
 							{t('เลือกวันเวลา ประเภทรถ ผังช่องจอด และบริการเสริมครบในหน้าเดียว', 'Select schedule, vehicle types, parking map slots, and add-on services.')}
 						</p>
 					</div>
-				</div>
+				</header>
+				{wizardNavigation}
 
-				<form id="fluffy-carpark-form" className="fluffy-carpark__form grid gap-6 lg:grid-cols-12" onSubmit={handleSubmit}>
-					<div id="fluffy-carpark-main" className="fluffy-carpark__main space-y-6 lg:col-span-8">
-						{/* Step Wizard Navigation */}
-						<nav id="fluffy-carpark-wizard-nav" className="fluffy-carpark__wizard-nav fluffy-wizard-nav" aria-label="Booking steps">
-							{wizardSteps.map((step) => {
-								const isActive = currentStep === step.id;
-								const isCompleted = currentStep > step.id;
-								return (
-									<button
-										id={`fluffy-wizard-step-${step.id}`}
-										className={`fluffy-carpark__wizard-btn fluffy-wizard-btn ${
-											isActive ? 'is-active' : isCompleted ? 'is-completed' : ''
-										}`}
-										type="button"
-										key={step.id}
-										disabled={step.id > currentStep}
-										onClick={() => {
-											if (step.id < currentStep) {
-												setCurrentStep(step.id);
-											}
-										}}
-									>
-										<span className="fluffy-wizard-btn__num">
-											{isCompleted ? '✓' : step.id}
-										</span>
-										<span className="truncate">{step.label}</span>
-									</button>
-								);
-							})}
-						</nav>
+				{currentStep === 2 ? (
+					<ParkingStep2 onBack={() => setCurrentStep(1)} onNext={handleNextStep} />
+				) : (
+				<form id="fluffy-carpark-form" className="fluffy-carpark__form" onSubmit={handleSubmit}>
+					<div id="fluffy-carpark-main" className="fluffy-carpark__main">
 
 						{currentStep === 1 && (
 							<>
 								{/* Section 1: Date, Time & Location */}
 								<section id="fluffy-carpark-schedule" className="fluffy-carpark__section fluffy-saas-card">
-							<h2 className="mb-4 text-base font-semibold text-[#0F172A]">{t('1. วันเวลาและสถานที่', '1. Schedule & Location')}</h2>
+							<h2 className="fluffy-carpark__section-title"><RiCalendarLine size={20} aria-hidden="true" />{t('วันเวลาและสถานที่', 'Schedule & location')}</h2>
 							<div className="grid gap-4 sm:grid-cols-2">
 								<div>
 									<label htmlFor="fluffy-start-date" className="fluffy-saas-label">{t('วันเริ่มต้น', 'Start Date')} *</label>
@@ -326,20 +240,21 @@ export default function CarparkBooking() {
 
 						{/* Section 2: Vehicle Types & Quantities (original vehicle-rows-container) */}
 						<section id="fluffy-carpark-vehicles" className="fluffy-carpark__section fluffy-saas-card">
-							<div className="mb-4 flex items-center justify-between">
+							<div className="fluffy-carpark__vehicle-heading">
 								<div>
-									<h2 className="text-base font-semibold text-[#0F172A]">{t('2. ประเภทรถและจำนวนคัน', '2. Vehicle Types & Quantity')}</h2>
+									<h2 className="fluffy-carpark__section-title"><RiCarLine size={20} aria-hidden="true" />{t('รถที่จะนำมาจอด', 'Vehicles to park')}</h2>
 									<p className="text-xs text-[#64748B]">{t(`รวมทั้งหมด ${totalVehicles} คัน`, `Total: ${totalVehicles} vehicle(s)`)}</p>
 								</div>
 								<button type="button" onClick={addVehicleRow} className="fluffy-saas-btn fluffy-saas-btn-secondary !px-3 !py-1.5 text-xs">
-									+ {t('เพิ่มประเภทรถ', 'Add Vehicle Type')}
+									<RiAddLine size={16} aria-hidden="true" /> {t('เพิ่มประเภทรถ', 'Add Vehicle Type')}
 								</button>
 							</div>
 							<div className="space-y-3">
 								{vehicleRows.map((row, idx) => (
-									<div key={idx} className="grid gap-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3 sm:grid-cols-12">
-										<div className="sm:col-span-6">
+									<div key={idx} className="fluffy-carpark__vehicle-row">
+										<div className="fluffy-carpark__vehicle-type">
 											<select
+												aria-label={t('ประเภทรถ', 'Vehicle type')}
 												className="fluffy-saas-select"
 												value={row.type}
 												onChange={(e) => updateVehicleRow(idx, 'type', e.target.value)}
@@ -349,43 +264,43 @@ export default function CarparkBooking() {
 												))}
 											</select>
 										</div>
-										<div className="flex items-center gap-2 sm:col-span-4">
+										<div className="fluffy-carpark__quantity" role="group" aria-label={t('จำนวนรถ', 'Vehicle quantity')}>
 											<button
 												type="button"
 												onClick={() => updateVehicleRow(idx, 'quantity', Math.max(1, (Number(row.quantity) || 1) - 1))}
-												className="fluffy-saas-btn fluffy-saas-btn-secondary !px-3 !py-1.5"
+												aria-label={t('ลดจำนวนรถ', 'Decrease vehicle quantity')}
+												disabled={Number(row.quantity) <= 1}
 											>
-												-
+												<RiSubtractLine size={18} aria-hidden="true" />
 											</button>
 											<input
 												type="number"
 												min={1}
 												max={20}
-												className="fluffy-saas-input text-center"
+												className="fluffy-saas-input fluffy-carpark__quantity-input"
+												aria-label={t('จำนวนคัน', 'Number of vehicles')}
 												value={row.quantity}
 												onChange={(e) => updateVehicleRow(idx, 'quantity', Math.max(1, Number(e.target.value) || 1))}
 											/>
 											<button
 												type="button"
 												onClick={() => updateVehicleRow(idx, 'quantity', (Number(row.quantity) || 1) + 1)}
-												className="fluffy-saas-btn fluffy-saas-btn-secondary !px-3 !py-1.5"
+												aria-label={t('เพิ่มจำนวนรถ', 'Increase vehicle quantity')}
 											>
-												+
+												<RiAddLine size={18} aria-hidden="true" />
 											</button>
 										</div>
-										<div className="flex items-center justify-end sm:col-span-2">
-											{vehicleRows.length > 1 && (
+										{vehicleRows.length > 1 && (
 												<button
 													type="button"
 													onClick={() => removeVehicleRow(idx)}
-													className="text-xs font-medium text-red-600 hover:underline"
+													className="fluffy-carpark__vehicle-remove"
 												>
 													{t('ลบ', 'Remove')}
 												</button>
 											)}
-										</div>
 										{String(row.type) === '1236' && (
-											<div className="sm:col-span-12">
+											<div className="fluffy-carpark__vehicle-other">
 												<input
 													type="text"
 													className="fluffy-saas-input"
@@ -402,190 +317,13 @@ export default function CarparkBooking() {
 							</>
 						)}
 
-						{currentStep === 2 && (
-							<>
-								{/* Section 3: Original 2D Parking Grid Map */}
-								<section id="fluffy-parking-map-card" className="fluffy-saas-card">
-							<div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-								<div>
-									<h2 className="text-base font-semibold text-[#0F172A]">{t('2. ผังเลือกช่องจอดรถ', '2. Parking Space Map')}</h2>
-									<p className="text-xs text-[#64748B]">
-										{t(`เลือกแล้ว ${selectedSpaces.length} / ${totalVehicles} ช่อง`, `Selected ${selectedSpaces.length} / ${totalVehicles} space(s)`)}
-									</p>
-								</div>
-								<div className="inline-flex rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-1 text-xs">
-									{[
-										{ key: 'status', label: t('สถานะ', 'Status') },
-										{ key: 'distance', label: t('ระยะห่าง', 'Distance') },
-										{ key: 'zone', label: t('โซน', 'Zone') },
-									].map((mode) => (
-										<button
-											type="button"
-											key={mode.key}
-											onClick={() => setViewMode(mode.key)}
-											className={`rounded-md px-3 py-1.5 font-semibold transition ${
-												viewMode === mode.key ? 'bg-[var(--fluffy-primary)] text-white' : 'text-[#64748B] hover:text-[#0F172A]'
-											}`}
-										>
-											{mode.label}
-										</button>
-									))}
-								</div>
-							</div>
-
-							<div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-								<div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3">
-									<div className="text-xs text-[#64748B]">{t('ช่องจอดทั้งหมด', 'Total Spaces')}</div>
-									<div className="mt-0.5 text-lg font-bold text-[#0F172A]">{stats.total}</div>
-								</div>
-								<div className="rounded-lg border border-emerald-200 bg-emerald-50/60 p-3">
-									<div className="text-xs text-emerald-700">{t('ช่องจอดว่าง', 'Available')}</div>
-									<div className="mt-0.5 text-lg font-bold text-emerald-700">{stats.available}</div>
-								</div>
-								<div className="rounded-lg border border-red-200 bg-red-50/60 p-3">
-									<div className="text-xs text-red-700">{t('ใช้งานแล้ว', 'Occupied')}</div>
-									<div className="mt-0.5 text-lg font-bold text-red-700">{stats.occupied}</div>
-								</div>
-								<div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3">
-									<div className="text-xs text-[#64748B]">{t('อัตราการใช้งาน', 'Occupancy')}</div>
-									<div className="mt-0.5 text-lg font-bold text-[#0F172A]">{stats.rate}%</div>
-								</div>
-							</div>
-
-							<div className="mb-4 flex flex-wrap items-center gap-4 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] px-3.5 py-2.5">
-								{legendItems.map((item) => (
-									<div key={item.text} className="flex items-center gap-2 text-xs text-[#0F172A]">
-										<span className={`inline-block h-3.5 w-3.5 rounded ${item.color}`} />
-										<span>{item.text}</span>
-									</div>
-								))}
-							</div>
-
-							{checking ? (
-								<ParkingMapSkeleton />
-							) : !hasChecked ? (
-								<div className="rounded-xl border border-dashed border-[#E2E8F0] bg-[#F8FAFC] p-8 text-center text-sm text-[#64748B]">
-									{conditionError
-										? conditionError.message
-										: t('กรุณาเลือกวันเริ่มต้น วันสิ้นสุด (ล่วงหน้าอย่างน้อย 24 ชม.) เพื่อแสดงผังช่องจอดว่าง', 'Select start and end dates (at least 24 hours in advance) to view available parking slots.')}
-								</div>
-							) : filteredSpaces.length === 0 ? (
-								<p className="py-6 text-center text-sm text-[#64748B]">{t('ไม่พบข้อมูลช่องจอด', 'No parking spaces found.')}</p>
-							) : gridLayout.hasCoords ? (
-								<div className="overflow-x-auto rounded-xl border border-[#E2E8F0] bg-white p-4">
-									<div
-										id="parking-grid-container"
-										className="grid gap-1.5"
-										style={{ gridTemplateColumns: `repeat(${gridLayout.cols}, minmax(44px, 1fr))` }}
-									>
-										{gridLayout.matrix.flat().map((cell) => {
-											const space = cell.space;
-											const isOccupied = space ? occupiedIds.includes(Number(space.id)) : false;
-											const isSelected = space
-												? selectedSpaces.some((s) => Number(s.parking_post_id) === Number(space.id))
-												: false;
-											const cellClass = getSpaceColorClass(space, isOccupied, isSelected, viewMode);
-
-											if (!space) {
-												return (
-													<div
-														key={`walkway-${cell.x}-${cell.y}`}
-														title={t('ทางเดิน', 'Walkway')}
-														className={`flex h-10 items-center justify-center rounded-md text-[10px] ${cellClass}`}
-													/>
-												);
-											}
-
-											return (
-												<button
-													id={`fluffy-space-${space.id}`}
-													className={`flex h-10 items-center justify-center rounded-md text-xs font-semibold transition ${cellClass}`}
-													type="button"
-													key={space.id}
-													disabled={isOccupied}
-													title={`${space.title || space.parking_id} - ${isOccupied ? t('ไม่ว่าง', 'Occupied') : t('ว่าง', 'Available')}`}
-													onClick={() => toggleSpace(space)}
-												>
-													{String(space.title || space.parking_id).toUpperCase()}
-												</button>
-											);
-										})}
-									</div>
-								</div>
-							) : (
-								<div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-									{filteredSpaces.map((space) => {
-										const isOccupied = occupiedIds.includes(Number(space.id));
-										const isSelected = selectedSpaces.some((s) => Number(s.parking_post_id) === Number(space.id));
-										const cellClass = getSpaceColorClass(space, isOccupied, isSelected, viewMode);
-										return (
-											<button
-												id={`fluffy-space-${space.id}`}
-												className={`flex h-11 items-center justify-center rounded-lg text-xs font-semibold transition ${cellClass}`}
-												type="button"
-												key={space.id}
-												disabled={isOccupied}
-												onClick={() => toggleSpace(space)}
-											>
-												{String(space.title || space.parking_id).toUpperCase()}
-											</button>
-										);
-									})}
-								</div>
-							)}
-
-							{selectedSpaces.length > 0 && (
-								<div className="mt-5 space-y-3 border-t border-[#E2E8F0] pt-4">
-									<p className="text-xs font-semibold uppercase tracking-wide text-[#64748B]">
-										{t('ทะเบียนรถสำหรับแต่ละช่องจอด', 'License Plate per Selected Space')}
-									</p>
-									{selectedSpaces.map((item) => (
-										<div key={item.parking_post_id} className="grid gap-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3 sm:grid-cols-12">
-											<div className="flex items-center text-sm font-semibold text-[#0F172A] sm:col-span-3">
-												{t('ช่อง', 'Slot')} {item.title}
-											</div>
-											<div className="sm:col-span-5">
-												<input
-													className="fluffy-saas-input"
-													type="text"
-													placeholder={t('กรอกทะเบียนรถ เช่น กข 1234', 'License plate')}
-													value={item.licensePlate}
-													onChange={(e) => updateSpaceField(item.parking_post_id, 'licensePlate', e.target.value)}
-												/>
-											</div>
-											<div className="sm:col-span-4">
-												{savedPlates.length > 0 && (
-													<select
-														className="fluffy-saas-select"
-														value=""
-														onChange={(e) => {
-															if (e.target.value) {
-																updateSpaceField(item.parking_post_id, 'licensePlate', e.target.value);
-															}
-														}}
-													>
-														<option value="">{t('เลือกจากทะเบียนที่บันทึก', 'Pick saved plate')}</option>
-														{savedPlates.map((p) => (
-															<option key={p.id} value={p.tabienrod_number}>{p.tabienrod_number}</option>
-														))}
-													</select>
-												)}
-											</div>
-										</div>
-									))}
-								</div>
-							)}
-						</section>
-							</>
-						)}
-
 						{currentStep === 3 && (
 							<>
 								{/* Section 4: Original Add-on Services (Pickup & Valet) */}
-								<section id="fluffy-carpark-addons" className="fluffy-carpark__section fluffy-saas-card space-y-4">
-							<h2 className="text-base font-semibold text-[#0F172A]">{t('4. บริการเสริม (ไม่บังคับ)', '4. Add-on Services (Optional)')}</h2>
+								<section id="fluffy-carpark-addons" className="fluffy-carpark__section fluffy-saas-card space-y-2">
+							<h2 className="fluffy-carpark__section-title"><RiServiceLine size={20} aria-hidden="true" />{t('บริการเสริม (ไม่บังคับ)', 'Add-ons (optional)')}</h2>
 
-							<label className="flex cursor-pointer items-center gap-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3.5">
+							<label className="fluffy-carpark__addon-option">
 								<input
 									type="checkbox"
 									checked={servicePickup}
@@ -599,7 +337,7 @@ export default function CarparkBooking() {
 							</label>
 
 							{servicePickup && (
-								<div className="grid gap-3 rounded-lg border border-[#E2E8F0] p-4 sm:grid-cols-2">
+								<div className="grid gap-2 pb-2 sm:grid-cols-2">
 									<input className="fluffy-saas-input" type="text" placeholder={t('เที่ยวบินขาไป', 'Departure Flight')} value={sendingAddon.flightDepart} onChange={(e) => setSendingAddon((p) => ({ ...p, flightDepart: e.target.value }))} />
 									<TimePickerField id="fluffy-sending-depart-time" value={sendingAddon.flightDepartTime} onChange={(val) => setSendingAddon((p) => ({ ...p, flightDepartTime: val }))} placeholder={t('เวลาเที่ยวบินขาไป', 'Departure time')} />
 									<input className="fluffy-saas-input" type="text" placeholder={t('เที่ยวบินขากลับ', 'Arrival Flight')} value={sendingAddon.flightArrival} onChange={(e) => setSendingAddon((p) => ({ ...p, flightArrival: e.target.value }))} />
@@ -612,7 +350,7 @@ export default function CarparkBooking() {
 								</div>
 							)}
 
-							<label className="flex cursor-pointer items-center gap-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3.5">
+							<label className="fluffy-carpark__addon-option">
 								<input
 									type="checkbox"
 									checked={serviceValet}
@@ -626,7 +364,7 @@ export default function CarparkBooking() {
 							</label>
 
 							{serviceValet && (
-								<div className="grid gap-3 rounded-lg border border-[#E2E8F0] p-4 sm:grid-cols-2">
+								<div className="grid gap-2 pb-2 sm:grid-cols-2">
 									<input className="fluffy-saas-input" type="text" placeholder={t('เที่ยวบินขาไป', 'Departure Flight')} value={valetAddon.flightDepart} onChange={(e) => setValetAddon((p) => ({ ...p, flightDepart: e.target.value }))} />
 									<TimePickerField id="fluffy-valet-depart-time" value={valetAddon.flightDepartTime} onChange={(val) => setValetAddon((p) => ({ ...p, flightDepartTime: val }))} placeholder={t('เวลาเที่ยวบินขาไป', 'Departure time')} />
 									<input className="fluffy-saas-input" type="text" placeholder={t('จุดรับรถ', 'Car Pickup Point')} value={valetAddon.pickupPoint} onChange={(e) => setValetAddon((p) => ({ ...p, pickupPoint: e.target.value }))} />
@@ -638,7 +376,7 @@ export default function CarparkBooking() {
 
 						{/* Section 5: Customer Information */}
 						<section id="fluffy-carpark-customer" className="fluffy-carpark__section fluffy-saas-card">
-							<h2 className="mb-4 text-base font-semibold text-[#0F172A]">{t('5. ข้อมูลผู้จอง', '5. Customer Information')}</h2>
+							<h2 className="fluffy-carpark__section-title"><RiUserLine size={20} aria-hidden="true" />{t('ข้อมูลผู้จอง', 'Contact details')}</h2>
 							<div className="grid gap-4 sm:grid-cols-2">
 								<div>
 									<label htmlFor="fluffy-cp-fullname" className="fluffy-saas-label">{t('ชื่อ - นามสกุล', 'Full Name')} *</label>
@@ -663,8 +401,8 @@ export default function CarparkBooking() {
 
 						{currentStep === 4 && (
 							<section id="fluffy-carpark-review" className="fluffy-carpark__section fluffy-saas-card space-y-5">
-								<h2 className="m-0 text-base font-semibold text-[#0F172A]">{t('ตรวจสอบข้อมูลการจอง', 'Review Reservation Details')}</h2>
-								<div className="grid gap-4 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-sm sm:grid-cols-2">
+								<h2 className="fluffy-carpark__section-title"><RiFileList3Line size={20} aria-hidden="true" />{t('ตรวจสอบข้อมูลการจอง', 'Review reservation')}</h2>
+								<div className="grid gap-4 rounded-lg bg-[#F1F5F9] p-4 text-sm sm:grid-cols-2">
 									<div>
 										<div className="text-xs text-[#64748B]">{t('สนามบิน', 'Location')}</div>
 										<div className="mt-0.5 font-semibold text-[#0F172A]">
@@ -710,16 +448,16 @@ export default function CarparkBooking() {
 									type="button"
 									onClick={() => setCurrentStep((s) => Math.max(1, s - 1))}
 								>
-									← {t('ย้อนกลับ', 'Back')}
+									<RiArrowLeftLine size={18} aria-hidden="true" /> {t('ย้อนกลับ', 'Back')}
 								</button>
 							</div>
 						)}
 					</div>
 
-					<aside id="fluffy-carpark-sidebar" className="fluffy-carpark__sidebar lg:col-span-4">
-						<div id="fluffy-carpark-summary" className="fluffy-carpark__summary fluffy-saas-card sticky top-20">
-							<h3 className="mb-4 text-base font-semibold text-[#0F172A]">{t('สรุปรายการจอง', 'Booking Summary')}</h3>
-							<div className="space-y-2.5 text-sm text-[#64748B]">
+					<aside id="fluffy-carpark-sidebar" className="fluffy-carpark__sidebar">
+						<div id="fluffy-carpark-summary" className="fluffy-carpark__summary fluffy-saas-card">
+							<h2 className="fluffy-carpark__section-title"><RiFileList3Line size={20} aria-hidden="true" />{t('สรุปรายการจอง', 'Booking summary')}</h2>
+							<div className="fluffy-carpark__summary-lines">
 								<div className="flex justify-between">
 									<span>{t('จำนวนรถ / ช่องจอด', 'Vehicles / Slots')}</span>
 									<span className="font-semibold text-[#0F172A]">{selectedSpaces.length} / {totalVehicles}</span>
@@ -734,13 +472,13 @@ export default function CarparkBooking() {
 										<span>-{discount.toLocaleString()} {t('บาท', 'THB')}</span>
 									</div>
 								)}
-								<div className="flex justify-between border-t border-[#E2E8F0] pt-3 text-base font-bold text-[#0F172A]">
+								<div className="fluffy-carpark__summary-total">
 									<span>{t('ยอดสุทธิ', 'Total')}</span>
-									<span className="text-[var(--fluffy-primary)]">{finalTotal.toLocaleString()} {t('บาท', 'THB')}</span>
+									<span className="fluffy-carpark__summary-price">{finalTotal.toLocaleString()} {t('บาท', 'THB')}</span>
 								</div>
 							</div>
 
-							<div className="mt-5 flex gap-2">
+							<div className="fluffy-carpark__coupon">
 								<input
 									id="fluffy-cp-coupon"
 									className="fluffy-saas-input"
@@ -757,7 +495,8 @@ export default function CarparkBooking() {
 
 							{currentStep < 4 ? (
 								<button key="sidebar-next-btn" type="button" onClick={handleNextStep} disabled={checking} className="fluffy-saas-btn fluffy-saas-btn-primary mt-6 w-full py-3">
-									{checking ? t('กำลังค้นหาช่องว่าง...', 'Checking...') : `${t('ขั้นตอนถัดไป', 'Next Step')} →`}
+									{checking ? t('กำลังค้นหาช่องว่าง...', 'Checking...') : t('ขั้นตอนถัดไป', 'Next Step')}
+									{!checking && <RiArrowRightLine size={18} aria-hidden="true" />}
 								</button>
 							) : (
 								<button key="sidebar-submit-btn" type="submit" disabled={submitting} className="fluffy-saas-btn fluffy-saas-btn-primary mt-6 w-full py-3">
@@ -767,6 +506,7 @@ export default function CarparkBooking() {
 						</div>
 					</aside>
 				</form>
+				)}
 			</div>
 
 			<StatusModal modal={modal} onClose={() => setModal((prev) => ({ ...prev, open: false }))} />

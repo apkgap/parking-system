@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_header();
 ?>
 
-<main id="primary" class="site-main bg-slate-50 min-h-screen">
+<main id="primary" class="site-main grow bg-white">
 	<div id="fluffy-booking-root" class="fluffy-react-root" data-mode="carpark"></div>
 </main>
 
